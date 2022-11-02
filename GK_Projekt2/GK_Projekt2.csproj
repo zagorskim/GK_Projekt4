@@ -8,4 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ObjParser\ObjParser\ObjParser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\quad_sphere.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

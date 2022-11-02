@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GK_Projekt2", "GK_Projekt2\GK_Projekt2.csproj", "{AB9EDC95-AB91-43A6-9D97-7B373D2E06A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GK_Projekt2", "GK_Projekt2\GK_Projekt2.csproj", "{AB9EDC95-AB91-43A6-9D97-7B373D2E06A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjParser", "ObjParser\ObjParser\ObjParser.csproj", "{04AA9B94-B460-4E73-BAF0-0154494BFE82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AB9EDC95-AB91-43A6-9D97-7B373D2E06A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9EDC95-AB91-43A6-9D97-7B373D2E06A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB9EDC95-AB91-43A6-9D97-7B373D2E06A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
