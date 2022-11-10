@@ -14,20 +14,22 @@ namespace GK_Projekt2
         private const int polySize = 3;
         private Obj _loadedObject { get; set; }
         private Bitmap _bitmap { get; set; }
-        public List<((int, int), (int, int))> ScaledEdgeList;
-        public List<(int, int)> ScaledVertexList;
+        public List<((int, int, int), (int, int, int))> ScaledEdgeList;
+        public List<(int, int, int, Face)> ScaledVertexList;
+        public (int, int, int)[] ScaledVertexOrder;
         // need to make a list of fillers to be able to fill different polygons of different vertex count
         public Filler _filler;
         public Form1()
         {
             InitializeComponent();
             _bitmap = new Bitmap(pbCanvas.Width, pbCanvas.Height);
-            _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/cone.obj");
-            ScaledEdgeList = new List<((int, int), (int, int))>();
-            ScaledVertexList = new List<(int, int)>();
-            (ScaledEdgeList, ScaledVertexList) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+            _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
+            ScaledEdgeList = new List<((int, int, int), (int, int, int))>();
+            ScaledVertexList = new List<(int, int, int, Face)>();
+            ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
+            (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
             pbCanvas.Image = _bitmap;
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize);
+            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder);
             DrawMesh();
         }
 
@@ -44,7 +46,6 @@ namespace GK_Projekt2
             var obj = new Obj();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                dialog.InitialDirectory = "c:\\";
                 dialog.Filter = "obj files (*.obj)|*.obj";
                 dialog.FilterIndex = 2;
                 dialog.RestoreDirectory = true;
@@ -54,7 +55,9 @@ namespace GK_Projekt2
                     var filePath = dialog.FileName;
                     obj.LoadObj(dialog.OpenFile());
                     _loadedObject = obj;
-                    (ScaledEdgeList, ScaledVertexList) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+                    ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
+                    (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+                    _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder);
                     DrawMesh();
                 }
             }
@@ -110,34 +113,44 @@ namespace GK_Projekt2
             var temp = new (int, int)[polySize];
             for (var i = 0; i < ScaledVertexList.Count; i++)
             {
-                temp[i % polySize] = ScaledVertexList[i];
+                temp[i % polySize] = (ScaledVertexList[i].Item1, ScaledVertexList[i].Item2);
                 if (i % polySize == 2)
-                    _filler.FillPoly(bitmap, temp);
+                    _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4);
             }
         }
 
-        public (int, int) ScaleToCurrentSize(double x, double y)
+        public (int, int, int) ScaleToCurrentSize(double x, double y, double z)
         {
-            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.99 + 1) * pbCanvas.Height / 2));
+            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.99 + 1) * pbCanvas.Height / 2), (int)((z * 0.99 + 1) * pbCanvas.Height / 2));
         }
 
 
-        public (List<((int, int), (int, int))>, List<(int, int)>) ScaleVertices(List<Face> faces, int width, int height)
+        public (List<((int, int, int), (int, int, int))>, List<(int, int, int, Face)>, (int, int, int)[]) ScaleVertices(List<Face> faces, int width, int height)
         {
-            var ret1 = new List<((int, int), (int, int))>();
-            var ret2 = new List<(int, int)>();
+            var ret1 = new List<((int, int, int), (int, int, int))>();
+            var ret2 = new List<(int, int, int, Face)>();
+            var ret3 = new (int, int, int)[_loadedObject.VertexList.Count];
             foreach (var i in faces)
             {
                 for (int j = 0; j < i.VertexIndexList.Length; j++)
                 {
-                    var point1 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[j] - 1].X, _loadedObject.VertexList[i.VertexIndexList[j] - 1].Y);
-                    var point2 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X, _loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y);
-                    var temp = ((point1.Item1, point1.Item2), (point2.Item1, point2.Item2));
+                    var point1 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[j] - 1].X, 
+                        _loadedObject.VertexList[i.VertexIndexList[j] - 1].Y, 
+                        _loadedObject.VertexList[i.VertexIndexList[j] - 1].Z);
+                    var point2 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X, 
+                        _loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y, 
+                        _loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Z);
+                    var temp = ((point1.Item1, point1.Item2, point1.Item3), (point2.Item1, point2.Item2, point2.Item3));
                     ret1.Add(temp);
-                    ret2.Add(point1);
+                    ret2.Add((point1.Item1, point1.Item2, point1.Item3, i));
                 }
             }
-            return (ret1, ret2);
+            for (var i = 0; i < _loadedObject.VertexList.Count; i++)
+            {
+                var point = ScaleToCurrentSize(_loadedObject.VertexList[i].X, _loadedObject.VertexList[i].Y, _loadedObject.VertexList[i].Z);
+                ret3[i] = point;
+            }
+            return (ret1, ret2, ret3);
         }
     }
 }
