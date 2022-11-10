@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Security.Policy;
 using System.Windows.Forms;
+using FastBitmapLib;
 
 namespace GK_Projekt2
 {
@@ -17,8 +18,11 @@ namespace GK_Projekt2
         public List<((int, int, int), (int, int, int))> ScaledEdgeList;
         public List<(int, int, int, Face)> ScaledVertexList;
         public (int, int, int)[] ScaledVertexOrder;
+        public System.Threading.Mutex animationMutex;
         // need to make a list of fillers to be able to fill different polygons of different vertex count
         public Filler _filler;
+        public bool animationInProgress = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -31,11 +35,11 @@ namespace GK_Projekt2
             pbCanvas.Image = _bitmap;
             _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder);
             DrawMesh();
+            animationMutex = new System.Threading.Mutex();
         }
 
         public Obj ReadObjFile(string path)
         {
-            // Working!
             var reader = new Obj();
             reader.LoadObj(path);
             return reader;
@@ -63,27 +67,15 @@ namespace GK_Projekt2
             }
         }
 
-        private void btnFillMesh_Click(object sender, EventArgs e)
-        {
-            DrawMesh();
-        }
-
         public void DrawMesh()
         {
             var newBitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
-            //foreach (var i in _loadedObject.NVList)
-            //{
-            //    var temp = ScaleToCurrentSize(i.X, i.Y);
-            //    newBitmap.SetPixel(temp.Item1, temp.Item2, Color.FromArgb(255, 0, 0));
-            //}
-            FillMesh(newBitmap);
+            var fastBitmap = new FastBitmap(newBitmap);
+            fastBitmap.Lock();
+            FillMesh(fastBitmap);
+            fastBitmap.Unlock();
             if(cbMesh.Checked)
                 DrawLines(newBitmap, System.Drawing.Color.Black, 1);
-            //foreach (var j in _loadedObject.NVList)
-            //{
-            //    var point1 = ScaleToCurrentSize(j.X, j.Y);
-            //    newBitmap.SetPixel(point1.Item1, point1.Item2, System.Drawing.Color.FromArgb(255, 0, 0));
-            //}
             pbCanvas.Image = newBitmap.Clone(new Rectangle(0, 0, newBitmap.Width, newBitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
         }
 
@@ -108,7 +100,7 @@ namespace GK_Projekt2
 
         }
 
-        public void FillMesh(Bitmap bitmap)
+        public void FillMesh(FastBitmap bitmap)
         {
             var temp = new (int, int)[polySize];
             for (var i = 0; i < ScaledVertexList.Count; i++)
@@ -151,6 +143,93 @@ namespace GK_Projekt2
                 ret3[i] = point;
             }
             return (ret1, ret2, ret3);
+        }
+
+        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.kd = (double)((HScrollBar)sender).Value / 100;
+            DrawMesh();
+        }
+
+        private void sbKs_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.ks = (double)((HScrollBar)sender).Value / 100;
+            DrawMesh();
+        }
+
+        private void sbLightX_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.light.Item1 = (int)(pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
+            DrawMesh();
+        }
+
+        private void sbLightY_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.light.Item2 = (int)(pbCanvas.Width * (double)((HScrollBar)sender).Value / 100);
+            DrawMesh();
+        }
+
+        private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.light.Item3 = (int)(pbCanvas.Height * 2 * (double)((HScrollBar)sender).Value / 100);
+            DrawMesh();
+        }
+
+        private void sbm_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.m = (double)((HScrollBar)sender).Value;
+            DrawMesh();
+        }
+
+        private void sbLightR_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Il.Item1 = (double)((HScrollBar)sender).Value / 100;
+            DrawMesh();
+        }
+
+        private void sbLightG_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Il.Item2 = (double)((HScrollBar)sender).Value / 100;
+            DrawMesh();
+        }
+
+        private void sbLightB_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Il.Item3 = (double)((HScrollBar)sender).Value / 100;
+            DrawMesh();
+        }
+
+        private void cbMesh_CheckedChanged(object sender, EventArgs e)
+        {
+            DrawMesh();
+        }
+
+        private async void btnAnimation_Click(object sender, EventArgs e)
+        {
+            animationInProgress = true;
+            (int, int) middle = (pbCanvas.Width / 2, pbCanvas.Height / 2);
+            for (int i = (int)(pbCanvas.Width / 4); animationInProgress && i < 3 * pbCanvas.Width / 4; i += 10)
+            {
+                _filler.light.Item1 = i;
+                double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(pbCanvas.Width / 2, 2)));
+                _filler.light.Item2 = (int)y;
+                DrawMesh();
+                this.Refresh();
+            }
+            for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= 10)
+            {
+                _filler.light.Item1 = i;
+                double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(pbCanvas.Width / 2, 2)));
+                _filler.light.Item2 = (int)y;
+                DrawMesh();
+                this.Refresh();
+            }
+            animationInProgress = false;
+        }
+
+        private void Animation()
+        { 
+
         }
     }
 }

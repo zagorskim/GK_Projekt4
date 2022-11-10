@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FastBitmap\FastBitmap\FastBitmapLib.csproj" />
     <ProjectReference Include="..\ObjParser\ObjParser\ObjParser.csproj" />
   </ItemGroup>
 

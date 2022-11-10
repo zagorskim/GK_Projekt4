@@ -20,13 +20,13 @@ namespace GK_Projekt2
         public Obj obj;
         public List<(int, int, int, Face)> ScaledVertices;
         public (int, int, int)[]  ScaledVertexOrder;
-        public (double, double, double) Io = (1, 0, 0);
+        public (double, double, double) Io = (1, 1, 1);
         public (double, double, double) Il = (1, 1, 1);
         public double kd = 1;
         public double ks = 1;
         public double m = 1;
 
-        public (int, int, int) light = (0 , 0, 500);
+        public (int, int, int) light = (0 , 0, 0);
 
 
         public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder)
@@ -35,6 +35,7 @@ namespace GK_Projekt2
             this.ScaledVertexOrder = ScaledVertexOrder;
             this.polyCount = polyCount;
             this.Height = Height;
+            light.Item3 = Height;
             this.Width = Width;
             this.obj = obj;
             EdgeTable = new EdgeTab[Height];
@@ -43,7 +44,7 @@ namespace GK_Projekt2
             ActiveEdgeTuple = new EdgeTab(polyCount);
         }
 
-        public void FillPoly(Bitmap bitmap, (int, int)[] e, Face face)
+        public void FillPoly(FastBitmapLib.FastBitmap bitmap, (int, int)[] e, Face face)
         {
             for (var i = 0; i < e.Length; i++)
                 StoreEdge(e[i].Item1, e[i].Item2, e[(i + 1) % e.Length].Item1, e[(i + 1) % e.Length].Item2);
@@ -52,12 +53,9 @@ namespace GK_Projekt2
 
         // Algorithm inspired by this idea: https://www.geeksforgeeks.org/scan-line-polygon-filling-using-opengl-c/
 
-        public void Fill(Bitmap bitmap, Face face)
+        public void Fill(FastBitmapLib.FastBitmap bitmap, Face face)
         {
             int i, j, x1, ymax1, x2, ymax2, FillFlag = 0, coordCount;
-            Pen pen = new Pen(System.Drawing.Color.Red, 1);
-            using (var graphics = Graphics.FromImage(bitmap))
-            {
                 for (i = 0; i < Height; i++)
                 {
                     for (j = 0; j < EdgeTable[i].count; j++)
@@ -133,8 +131,6 @@ namespace GK_Projekt2
                     {
                         (ActiveEdgeTuple.buckets[k]).xofymin = (ActiveEdgeTuple.buckets[k]).xofymin + (ActiveEdgeTuple.buckets[k]).slopeinverse;
                     }
-                }
-                pen.Dispose();
             }
             foreach (var e in EdgeTable)
                 e.count = 0;
@@ -148,7 +144,7 @@ namespace GK_Projekt2
             var v2 = (obj.NVList[face.NVIndexList[1] - 1].X, obj.NVList[face.NVIndexList[1] - 1].Y, obj.NVList[face.NVIndexList[1] - 1].Z);
             var v3 = (obj.NVList[face.NVIndexList[2] - 1].X, obj.NVList[face.NVIndexList[2] - 1].Y, obj.NVList[face.NVIndexList[2] - 1].Z);
 
-            var N = NormalizeVectorFromVector(InterpolateVectors(v1, v2, v3, CalculateBaricentricRatio((x, y), 
+            var N = NormalizeVector(InterpolateVectors(v1, v2, v3, CalculateBaricentricRatio((x, y), 
                 ScaledVertexOrder[face.VertexIndexList[0] - 1], 
                 ScaledVertexOrder[face.VertexIndexList[1] - 1], 
                 ScaledVertexOrder[face.VertexIndexList[2] - 1])));
@@ -157,14 +153,14 @@ namespace GK_Projekt2
                 ScaledVertexOrder[face.VertexIndexList[1] - 1].Item3 + 
                 ScaledVertexOrder[face.VertexIndexList[2] - 1].Item3) / 3), 
                 light);
-            var cosNL = CalculateCosUsingScalarProduct(N, L);
+            double cosNL = CalculateCosUsingScalarProduct(N, L);
             cosNL = cosNL > 0 ? cosNL : 0;
-            var cosVR = CalculateCosUsingScalarProduct((0, 0, 1), (2 * cosNL * N.Item1 - L.Item1, 2 * cosNL * N.Item2 - L.Item2, 2 * cosNL * N.Item3 - L.Item3));
+            double cosVR = CalculateCosUsingScalarProduct((0, 0, 1), ( cosNL * N.Item1 - L.Item1, 2 * cosNL * N.Item2 - L.Item2, 2 * cosNL * N.Item3 - L.Item3));
             cosVR = cosVR > 0 ? cosVR : 0;
-            var r = kd * Il.Item1 * Io.Item1 * cosNL + ks * Il.Item1 * Io.Item1 * Math.Pow(cosVR, m);
-            var g = kd * Il.Item2 * Io.Item2 * cosNL + ks * Il.Item2 * Io.Item2 * Math.Pow(cosVR, m);
-            var b = kd * Il.Item3 * Io.Item3 * cosNL + ks * Il.Item3 * Io.Item3 * Math.Pow(cosVR, m);
-            var ret = System.Drawing.Color.FromArgb((int)(r * 255 > 255 ? 255 : r * 255), (int)(g * 255 > 255 ? 255 : g * 255), (int)(b * 255 > 255 ? 255 : b * 255));
+            double r = kd * Il.Item1 * Io.Item1 * cosNL + ks * Il.Item1 * Io.Item1 * Math.Pow(cosVR, m);
+            double g = kd * Il.Item2 * Io.Item2 * cosNL + ks * Il.Item2 * Io.Item2 * Math.Pow(cosVR, m);
+            double b = kd * Il.Item3 * Io.Item3 * cosNL + ks * Il.Item3 * Io.Item3 * Math.Pow(cosVR, m);
+            System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * 255 > 255 ? 255 : r * 255), (int)(g * 255 > 255 ? 255 : g * 255), (int)(b * 255 > 255 ? 255 : b * 255));
             return ret;
         }
         private void InsertSort(EdgeTab edgeTab)
@@ -266,7 +262,7 @@ namespace GK_Projekt2
             return versor1.Item1 * versor2.Item1 + versor1.Item2 * versor2.Item2 + versor1.Item3 * versor2.Item3;
         }
 
-        private (double, double, double) NormalizeVectorFromVector((double, double, double) v)
+        private (double, double, double) NormalizeVector((double, double, double) v)
         {
             double scaleParameter = Math.Sqrt(Math.Pow(v.Item1, 2) + Math.Pow(v.Item2, 2) + Math.Pow(v.Item3, 2));
             if(scaleParameter == 0)
