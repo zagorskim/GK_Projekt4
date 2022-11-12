@@ -22,6 +22,21 @@ namespace GK_Projekt2
         // need to make a list of fillers to be able to fill different polygons of different vertex count
         public Filler _filler;
         public bool animationInProgress = false;
+        private static int lastTick;
+        private static int lastFrameRate;
+        private static int frameRate;
+
+        public static void CalculateFrameRate()
+        {
+            if (System.Environment.TickCount - lastTick >= 1000)
+            {
+                lastFrameRate = frameRate;
+                frameRate = 0;
+                lastTick = System.Environment.TickCount;
+            }
+            frameRate++;
+            Console.WriteLine(lastFrameRate);
+        }
 
         public Form1()
         {
@@ -92,17 +107,10 @@ namespace GK_Projekt2
             }
         }
 
-        public Dictionary<string, (int, int)[]> BucketSort()
-        {
-            var ret = new Dictionary<string, (int, int)[]>();
-
-            return ret;
-
-        }
-
         public void FillMesh(FastBitmap bitmap)
         {
             var temp = new (int, int)[polySize];
+            List<Task> x = new List<Task>();
             for (var i = 0; i < ScaledVertexList.Count; i++)
             {
                 temp[i % polySize] = (ScaledVertexList[i].Item1, ScaledVertexList[i].Item2);
@@ -113,7 +121,8 @@ namespace GK_Projekt2
 
         public (int, int, int) ScaleToCurrentSize(double x, double y, double z)
         {
-            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.99 + 1) * pbCanvas.Height / 2), (int)((z * 0.99 + 1) * pbCanvas.Height / 2));
+            // Margin applied (0.99) makes object being not symetrically lightened
+            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.999 + 1) * pbCanvas.Height / 2), (int)((z * 0.999 + 1) * pbCanvas.Height / 2));
         }
 
 
@@ -171,7 +180,7 @@ namespace GK_Projekt2
 
         private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item3 = (int)(pbCanvas.Height * 2 * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item3 = (int)(pbCanvas.Height * 1.5 * (double)((HScrollBar)sender).Value / 100);
             DrawMesh();
         }
 
@@ -206,30 +215,37 @@ namespace GK_Projekt2
 
         private async void btnAnimation_Click(object sender, EventArgs e)
         {
+            await Task.Run(() => Animation());
+        }
+
+        public void Animation()
+        {
             animationInProgress = true;
+            int radius = pbCanvas.Width / 2;
+            int increment = 3;
             (int, int) middle = (pbCanvas.Width / 2, pbCanvas.Height / 2);
-            for (int i = (int)(pbCanvas.Width / 4); animationInProgress && i < 3 * pbCanvas.Width / 4; i += 10)
+            for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
             {
                 _filler.light.Item1 = i;
-                double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(pbCanvas.Width / 2, 2)));
+                double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                 _filler.light.Item2 = (int)y;
                 DrawMesh();
-                this.Refresh();
+                CalculateFrameRate();
             }
-            for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= 10)
+            for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4 + 50; i -= increment, radius -= increment / 3)
             {
                 _filler.light.Item1 = i;
-                double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(pbCanvas.Width / 2, 2)));
+                double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                 _filler.light.Item2 = (int)y;
                 DrawMesh();
-                this.Refresh();
+                CalculateFrameRate();
             }
             animationInProgress = false;
         }
 
-        private void Animation()
-        { 
-
+        private void btnStopAnimation_Click(object sender, EventArgs e)
+        {
+            animationInProgress = false;
         }
     }
 }
