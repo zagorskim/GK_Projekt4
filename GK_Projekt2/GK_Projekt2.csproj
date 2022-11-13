@@ -56,6 +56,9 @@
     <None Update="Resources\ico_sphere.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\pexels-anni-roenkae-2832432.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\quad_sphere.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

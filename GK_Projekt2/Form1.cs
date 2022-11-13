@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Security.Policy;
 using System.Windows.Forms;
 using FastBitmapLib;
+using System.CodeDom.Compiler;
+using System.IO;
 
 namespace GK_Projekt2
 {
@@ -14,11 +16,13 @@ namespace GK_Projekt2
     {
         private const int polySize = 3;
         private Obj _loadedObject { get; set; }
-        private Bitmap _bitmap { get; set; }
         public List<((int, int, int), (int, int, int))> ScaledEdgeList;
         public List<(int, int, int, Face)> ScaledVertexList;
         public (int, int, int)[] ScaledVertexOrder;
         public System.Threading.Mutex animationMutex;
+        public Bitmap _bitmap;
+        public Bitmap _texture;
+        public FastBitmap _fastBitmap;
         // need to make a list of fillers to be able to fill different polygons of different vertex count
         public Filler _filler;
         public bool animationInProgress = false;
@@ -35,20 +39,22 @@ namespace GK_Projekt2
                 lastTick = System.Environment.TickCount;
             }
             frameRate++;
-            Console.WriteLine(lastFrameRate);
+            System.Diagnostics.Debug.WriteLine(lastFrameRate);
         }
 
         public Form1()
         {
             InitializeComponent();
-            _bitmap = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+            _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
+            _texture = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+            _fastBitmap = new FastBitmap(_bitmap);
             _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
             ScaledEdgeList = new List<((int, int, int), (int, int, int))>();
             ScaledVertexList = new List<(int, int, int, Face)>();
             ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
             (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-            pbCanvas.Image = _bitmap;
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder);
+            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+            sbLightZ.Value= sbLightZ.Maximum * 2 / 3;
             DrawMesh();
             animationMutex = new System.Threading.Mutex();
         }
@@ -76,7 +82,7 @@ namespace GK_Projekt2
                     _loadedObject = obj;
                     ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
                     (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                    _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder);
+                    _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
                     DrawMesh();
                 }
             }
@@ -84,14 +90,12 @@ namespace GK_Projekt2
 
         public void DrawMesh()
         {
-            var newBitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
-            var fastBitmap = new FastBitmap(newBitmap);
-            fastBitmap.Lock();
-            FillMesh(fastBitmap);
-            fastBitmap.Unlock();
+            _fastBitmap.Lock();
+            FillMesh(_fastBitmap);
+            _fastBitmap.Unlock();
             if(cbMesh.Checked)
-                DrawLines(newBitmap, System.Drawing.Color.Black, 1);
-            pbCanvas.Image = newBitmap.Clone(new Rectangle(0, 0, newBitmap.Width, newBitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                DrawLines(_bitmap, System.Drawing.Color.Black, 1);
+            pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
         }
 
         public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size)
@@ -110,7 +114,6 @@ namespace GK_Projekt2
         public void FillMesh(FastBitmap bitmap)
         {
             var temp = new (int, int)[polySize];
-            List<Task> x = new List<Task>();
             for (var i = 0; i < ScaledVertexList.Count; i++)
             {
                 temp[i % polySize] = (ScaledVertexList[i].Item1, ScaledVertexList[i].Item2);
@@ -221,24 +224,27 @@ namespace GK_Projekt2
         public void Animation()
         {
             animationInProgress = true;
-            int radius = pbCanvas.Width / 2;
-            int increment = 3;
+            int increment = 10;
             (int, int) middle = (pbCanvas.Width / 2, pbCanvas.Height / 2);
-            for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
+            while (animationInProgress)
             {
-                _filler.light.Item1 = i;
-                double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
-                _filler.light.Item2 = (int)y;
-                DrawMesh();
-                CalculateFrameRate();
-            }
-            for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4 + 50; i -= increment, radius -= increment / 3)
-            {
-                _filler.light.Item1 = i;
-                double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
-                _filler.light.Item2 = (int)y;
-                DrawMesh();
-                CalculateFrameRate();
+                int radius = pbCanvas.Width / 2;
+                for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
+                {
+                    _filler.light.Item1 = i;
+                    double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                    _filler.light.Item2 = (int)y;
+                    DrawMesh();
+                    CalculateFrameRate();
+                }
+                for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
+                {
+                    _filler.light.Item1 = i;
+                    double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                    _filler.light.Item2 = (int)y;
+                    DrawMesh();
+                    CalculateFrameRate();
+                }
             }
             animationInProgress = false;
         }
@@ -246,6 +252,64 @@ namespace GK_Projekt2
         private void btnStopAnimation_Click(object sender, EventArgs e)
         {
             animationInProgress = false;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            int temp = Math.Min(pPictureBoxPanel.Width, pPictureBoxPanel.Height);
+            pbCanvas.Width = temp;
+            pbCanvas.Height = temp;
+            pbCanvas.Size = new Size(temp, temp);
+            _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
+            _fastBitmap = new FastBitmap(_bitmap);
+            (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+            DrawMesh();
+        }
+
+        private void sbObjectR_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Io.Item1 = (double)((HScrollBar)sender).Value / 100;
+            if (_filler.textureColor == false)
+                DrawMesh();
+        }
+
+        private void sbObjectG_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Io.Item2 = (double)((HScrollBar)sender).Value / 100;
+            if (_filler.textureColor == false)
+                DrawMesh();
+        }
+
+        private void sbObjectB_Scroll(object sender, ScrollEventArgs e)
+        {
+            _filler.Io.Item3 = (double)((HScrollBar)sender).Value / 100;
+            if(_filler.textureColor == false)
+                DrawMesh();
+        }
+
+        private void rbFixedObjectColor_CheckedChanged(object sender, EventArgs e)
+        {
+            _filler.textureColor = !rbFixedObjectColor.Checked;
+            DrawMesh();
+        }
+
+        private void btnLoadTexture_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "jpg files (*.jpg)|*.jpg";
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var filePath = dialog.FileName;
+                    _texture = new Bitmap(Image.FromFile(filePath));
+                    _filler._texture = this._texture;
+                    DrawMesh();
+                }
+            }
         }
     }
 }

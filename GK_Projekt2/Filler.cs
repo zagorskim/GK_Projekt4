@@ -12,6 +12,7 @@ namespace GK_Projekt2
 {
     public class Filler
     {
+        public const int maxByte = 255;
         public int Height;
         public int Width;
         public int polyCount;
@@ -19,18 +20,21 @@ namespace GK_Projekt2
         public EdgeTab ActiveEdgeTuple;
         public Obj obj;
         public List<(int, int, int, Face)> ScaledVertices;
+        public Bitmap _texture { get; set; }
         public (int, int, int)[]  ScaledVertexOrder;
         public (double, double, double) Io = (1, 1, 1);
         public (double, double, double) Il = (1, 1, 1);
         public double kd = 1;
         public double ks = 1;
         public double m = 1;
+        public bool textureColor = true;
 
-        public (int, int, int) light = (0 , 0, 0);
+        public (int, int, int) light = (0, 0, 0);
 
 
-        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder)
+        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture)
         {
+            this._texture = texture;
             this.ScaledVertices = ScaledVertices;
             this.ScaledVertexOrder = ScaledVertexOrder;
             this.polyCount = polyCount;
@@ -140,13 +144,21 @@ namespace GK_Projekt2
         private System.Drawing.Color CalculateColor(int x, int y, Face face)
         {
             //TBD something's wrong, light Z parameter somehow influence it's Y parameter
+            (double, double, double) I;
+            if (textureColor == true)
+            {
+                var color = _texture.GetPixel(x, y);
+                I = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
+            }
+            else
+                I = this.Io;
             var v1 = (obj.NVList[face.NVIndexList[0] - 1].X, obj.NVList[face.NVIndexList[0] - 1].Y, obj.NVList[face.NVIndexList[0] - 1].Z);
             var v2 = (obj.NVList[face.NVIndexList[1] - 1].X, obj.NVList[face.NVIndexList[1] - 1].Y, obj.NVList[face.NVIndexList[1] - 1].Z);
             var v3 = (obj.NVList[face.NVIndexList[2] - 1].X, obj.NVList[face.NVIndexList[2] - 1].Y, obj.NVList[face.NVIndexList[2] - 1].Z);
 
-            var N = NormalizeVector(InterpolateVectors(v1, v2, v3, CalculateBaricentricRatio((x, y), 
-                ScaledVertexOrder[face.VertexIndexList[0] - 1], 
-                ScaledVertexOrder[face.VertexIndexList[1] - 1], 
+            var N = NormalizeVector(InterpolateVectors(v1, v2, v3, CalculateBaricentricRatio((x, y),
+                ScaledVertexOrder[face.VertexIndexList[0] - 1],
+                ScaledVertexOrder[face.VertexIndexList[1] - 1],
                 ScaledVertexOrder[face.VertexIndexList[2] - 1])));
             var L = NormalizeVectorFromVertices((x, y, 
                 (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 + 
@@ -157,10 +169,12 @@ namespace GK_Projekt2
             cosNL = cosNL > 0 ? cosNL : 0;
             double cosVR = CalculateCosUsingScalarProduct((0, 0, 1), ( cosNL * N.Item1 - L.Item1, 2 * cosNL * N.Item2 - L.Item2, 2 * cosNL * N.Item3 - L.Item3));
             cosVR = cosVR > 0 ? cosVR : 0;
-            double r = kd * Il.Item1 * Io.Item1 * cosNL + ks * Il.Item1 * Io.Item1 * Math.Pow(cosVR, m);
-            double g = kd * Il.Item2 * Io.Item2 * cosNL + ks * Il.Item2 * Io.Item2 * Math.Pow(cosVR, m);
-            double b = kd * Il.Item3 * Io.Item3 * cosNL + ks * Il.Item3 * Io.Item3 * Math.Pow(cosVR, m);
-            System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * 255 > 255 ? 255 : r * 255), (int)(g * 255 > 255 ? 255 : g * 255), (int)(b * 255 > 255 ? 255 : b * 255));
+            double r = kd * Il.Item1 * I.Item1 * cosNL + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR, m);
+            double g = kd * Il.Item2 * I.Item2 * cosNL + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR, m);
+            double b = kd * Il.Item3 * I.Item3 * cosNL + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR, m);
+            System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte ? maxByte : r * maxByte), 
+                (int)(g * maxByte > maxByte ? maxByte : g * maxByte), 
+                (int)(b * maxByte > maxByte ? maxByte : b * maxByte));
             return ret;
         }
         private void InsertSort(EdgeTab edgeTab)

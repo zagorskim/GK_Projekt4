@@ -36,8 +36,16 @@ namespace GK_Projekt2
             this.btnAnimation = new System.Windows.Forms.Button();
             this.btnStopAnimation = new System.Windows.Forms.Button();
             this.cbMesh = new System.Windows.Forms.CheckBox();
-            this.pbCanvas = new System.Windows.Forms.PictureBox();
+            this.flpRadioButtons = new System.Windows.Forms.FlowLayoutPanel();
+            this.rbFixedObjectColor = new System.Windows.Forms.RadioButton();
+            this.rbTextureObjectColor = new System.Windows.Forms.RadioButton();
             this.tlpSliders = new System.Windows.Forms.TableLayoutPanel();
+            this.sbObjectB = new System.Windows.Forms.HScrollBar();
+            this.lblObjectB = new System.Windows.Forms.Label();
+            this.sbObjectG = new System.Windows.Forms.HScrollBar();
+            this.lblObjectG = new System.Windows.Forms.Label();
+            this.sbObjectR = new System.Windows.Forms.HScrollBar();
+            this.lblObjectR = new System.Windows.Forms.Label();
             this.sbLightB = new System.Windows.Forms.HScrollBar();
             this.lblLightB = new System.Windows.Forms.Label();
             this.sbLightG = new System.Windows.Forms.HScrollBar();
@@ -56,13 +64,18 @@ namespace GK_Projekt2
             this.lblKs = new System.Windows.Forms.Label();
             this.lblKd = new System.Windows.Forms.Label();
             this.sbKd = new System.Windows.Forms.HScrollBar();
+            this.pPictureBoxPanel = new System.Windows.Forms.Panel();
+            this.pbCanvas = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnLoadTexture = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.flpMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
+            this.flpRadioButtons.SuspendLayout();
             this.tlpSliders.SuspendLayout();
+            this.pPictureBoxPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,8 +96,8 @@ namespace GK_Projekt2
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tlpMain.Controls.Add(this.flpMenu, 0, 0);
-            this.tlpMain.Controls.Add(this.pbCanvas, 0, 1);
             this.tlpMain.Controls.Add(this.tlpSliders, 1, 1);
+            this.tlpMain.Controls.Add(this.pPictureBoxPanel, 0, 1);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
             this.tlpMain.Name = "tlpMain";
@@ -92,6 +105,7 @@ namespace GK_Projekt2
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 88F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpMain.Size = new System.Drawing.Size(800, 888);
             this.tlpMain.TabIndex = 1;
             // 
@@ -101,9 +115,11 @@ namespace GK_Projekt2
             this.flpMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tlpMain.SetColumnSpan(this.flpMenu, 2);
             this.flpMenu.Controls.Add(this.btnImport);
+            this.flpMenu.Controls.Add(this.btnLoadTexture);
             this.flpMenu.Controls.Add(this.btnAnimation);
             this.flpMenu.Controls.Add(this.btnStopAnimation);
             this.flpMenu.Controls.Add(this.cbMesh);
+            this.flpMenu.Controls.Add(this.flpRadioButtons);
             this.flpMenu.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpMenu.Location = new System.Drawing.Point(0, 0);
             this.flpMenu.Margin = new System.Windows.Forms.Padding(0);
@@ -113,7 +129,7 @@ namespace GK_Projekt2
             // 
             // btnAnimation
             // 
-            this.btnAnimation.Location = new System.Drawing.Point(88, 5);
+            this.btnAnimation.Location = new System.Drawing.Point(171, 5);
             this.btnAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnAnimation.Name = "btnAnimation";
             this.btnAnimation.Size = new System.Drawing.Size(71, 77);
@@ -124,7 +140,7 @@ namespace GK_Projekt2
             // 
             // btnStopAnimation
             // 
-            this.btnStopAnimation.Location = new System.Drawing.Point(169, 5);
+            this.btnStopAnimation.Location = new System.Drawing.Point(252, 5);
             this.btnStopAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnStopAnimation.Name = "btnStopAnimation";
             this.btnStopAnimation.Size = new System.Drawing.Size(71, 77);
@@ -139,7 +155,7 @@ namespace GK_Projekt2
             this.cbMesh.Checked = true;
             this.cbMesh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbMesh.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbMesh.Location = new System.Drawing.Point(248, 3);
+            this.cbMesh.Location = new System.Drawing.Point(331, 3);
             this.cbMesh.Name = "cbMesh";
             this.cbMesh.Size = new System.Drawing.Size(55, 81);
             this.cbMesh.TabIndex = 2;
@@ -147,20 +163,50 @@ namespace GK_Projekt2
             this.cbMesh.UseVisualStyleBackColor = true;
             this.cbMesh.CheckedChanged += new System.EventHandler(this.cbMesh_CheckedChanged);
             // 
-            // pbCanvas
+            // flpRadioButtons
             // 
-            this.pbCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbCanvas.Location = new System.Drawing.Point(10, 98);
-            this.pbCanvas.Margin = new System.Windows.Forms.Padding(10);
-            this.pbCanvas.Name = "pbCanvas";
-            this.pbCanvas.Size = new System.Drawing.Size(540, 540);
-            this.pbCanvas.TabIndex = 2;
-            this.pbCanvas.TabStop = false;
+            this.flpRadioButtons.Controls.Add(this.rbFixedObjectColor);
+            this.flpRadioButtons.Controls.Add(this.rbTextureObjectColor);
+            this.flpRadioButtons.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpRadioButtons.Location = new System.Drawing.Point(392, 17);
+            this.flpRadioButtons.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this.flpRadioButtons.Name = "flpRadioButtons";
+            this.flpRadioButtons.Size = new System.Drawing.Size(168, 52);
+            this.flpRadioButtons.TabIndex = 4;
+            // 
+            // rbFixedObjectColor
+            // 
+            this.rbFixedObjectColor.AutoSize = true;
+            this.rbFixedObjectColor.Location = new System.Drawing.Point(3, 3);
+            this.rbFixedObjectColor.Name = "rbFixedObjectColor";
+            this.rbFixedObjectColor.Size = new System.Drawing.Size(123, 19);
+            this.rbFixedObjectColor.TabIndex = 2;
+            this.rbFixedObjectColor.Text = "Fixed Object Color";
+            this.rbFixedObjectColor.UseVisualStyleBackColor = true;
+            this.rbFixedObjectColor.CheckedChanged += new System.EventHandler(this.rbFixedObjectColor_CheckedChanged);
+            // 
+            // rbTextureObjectColor
+            // 
+            this.rbTextureObjectColor.AutoSize = true;
+            this.rbTextureObjectColor.Checked = true;
+            this.rbTextureObjectColor.Location = new System.Drawing.Point(3, 28);
+            this.rbTextureObjectColor.Name = "rbTextureObjectColor";
+            this.rbTextureObjectColor.Size = new System.Drawing.Size(164, 19);
+            this.rbTextureObjectColor.TabIndex = 3;
+            this.rbTextureObjectColor.TabStop = true;
+            this.rbTextureObjectColor.Text = "Object Color From Texture";
+            this.rbTextureObjectColor.UseVisualStyleBackColor = true;
             // 
             // tlpSliders
             // 
             this.tlpSliders.ColumnCount = 1;
             this.tlpSliders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpSliders.Controls.Add(this.sbObjectB, 0, 23);
+            this.tlpSliders.Controls.Add(this.lblObjectB, 0, 22);
+            this.tlpSliders.Controls.Add(this.sbObjectG, 0, 21);
+            this.tlpSliders.Controls.Add(this.lblObjectG, 0, 20);
+            this.tlpSliders.Controls.Add(this.sbObjectR, 0, 19);
+            this.tlpSliders.Controls.Add(this.lblObjectR, 0, 18);
             this.tlpSliders.Controls.Add(this.sbLightB, 0, 17);
             this.tlpSliders.Controls.Add(this.lblLightB, 0, 16);
             this.tlpSliders.Controls.Add(this.sbLightG, 0, 15);
@@ -182,8 +228,14 @@ namespace GK_Projekt2
             this.tlpSliders.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpSliders.Location = new System.Drawing.Point(563, 91);
             this.tlpSliders.Name = "tlpSliders";
-            this.tlpSliders.RowCount = 19;
+            this.tlpSliders.RowCount = 25;
             this.tlpMain.SetRowSpan(this.tlpSliders, 2);
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -205,10 +257,68 @@ namespace GK_Projekt2
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpSliders.Size = new System.Drawing.Size(234, 794);
             this.tlpSliders.TabIndex = 4;
+            // 
+            // sbObjectB
+            // 
+            this.sbObjectB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sbObjectB.Location = new System.Drawing.Point(0, 690);
+            this.sbObjectB.Name = "sbObjectB";
+            this.sbObjectB.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectB.TabIndex = 27;
+            this.sbObjectB.Value = 100;
+            this.sbObjectB.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectB_Scroll);
+            // 
+            // lblObjectB
+            // 
+            this.lblObjectB.AutoSize = true;
+            this.lblObjectB.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblObjectB.Location = new System.Drawing.Point(3, 675);
+            this.lblObjectB.Name = "lblObjectB";
+            this.lblObjectB.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectB.TabIndex = 26;
+            this.lblObjectB.Text = "Light B Value";
+            // 
+            // sbObjectG
+            // 
+            this.sbObjectG.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sbObjectG.Location = new System.Drawing.Point(0, 630);
+            this.sbObjectG.Name = "sbObjectG";
+            this.sbObjectG.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectG.TabIndex = 25;
+            this.sbObjectG.Value = 100;
+            this.sbObjectG.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectG_Scroll);
+            // 
+            // lblObjectG
+            // 
+            this.lblObjectG.AutoSize = true;
+            this.lblObjectG.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblObjectG.Location = new System.Drawing.Point(3, 615);
+            this.lblObjectG.Name = "lblObjectG";
+            this.lblObjectG.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectG.TabIndex = 24;
+            this.lblObjectG.Text = "Light G Value";
+            // 
+            // sbObjectR
+            // 
+            this.sbObjectR.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sbObjectR.Location = new System.Drawing.Point(0, 570);
+            this.sbObjectR.Name = "sbObjectR";
+            this.sbObjectR.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectR.TabIndex = 23;
+            this.sbObjectR.Value = 100;
+            this.sbObjectR.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectR_Scroll);
+            // 
+            // lblObjectR
+            // 
+            this.lblObjectR.AutoSize = true;
+            this.lblObjectR.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblObjectR.Location = new System.Drawing.Point(3, 555);
+            this.lblObjectR.Name = "lblObjectR";
+            this.lblObjectR.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectR.TabIndex = 22;
+            this.lblObjectR.Text = "Light R Value";
             // 
             // sbLightB
             // 
@@ -388,6 +498,25 @@ namespace GK_Projekt2
             this.sbKd.Value = 100;
             this.sbKd.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
             // 
+            // pPictureBoxPanel
+            // 
+            this.pPictureBoxPanel.Controls.Add(this.pbCanvas);
+            this.pPictureBoxPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pPictureBoxPanel.Location = new System.Drawing.Point(10, 98);
+            this.pPictureBoxPanel.Margin = new System.Windows.Forms.Padding(10);
+            this.pPictureBoxPanel.Name = "pPictureBoxPanel";
+            this.pPictureBoxPanel.Size = new System.Drawing.Size(540, 540);
+            this.pPictureBoxPanel.TabIndex = 5;
+            // 
+            // pbCanvas
+            // 
+            this.pbCanvas.Location = new System.Drawing.Point(0, 0);
+            this.pbCanvas.Margin = new System.Windows.Forms.Padding(0);
+            this.pbCanvas.Name = "pbCanvas";
+            this.pbCanvas.Size = new System.Drawing.Size(540, 540);
+            this.pbCanvas.TabIndex = 2;
+            this.pbCanvas.TabStop = false;
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -426,6 +555,17 @@ namespace GK_Projekt2
             this.label2.TabIndex = 10;
             this.label2.Text = "Ks value";
             // 
+            // btnLoadTexture
+            // 
+            this.btnLoadTexture.Location = new System.Drawing.Point(88, 5);
+            this.btnLoadTexture.Margin = new System.Windows.Forms.Padding(5);
+            this.btnLoadTexture.Name = "btnLoadTexture";
+            this.btnLoadTexture.Size = new System.Drawing.Size(73, 77);
+            this.btnLoadTexture.TabIndex = 5;
+            this.btnLoadTexture.Text = "Load Texture";
+            this.btnLoadTexture.UseVisualStyleBackColor = true;
+            this.btnLoadTexture.Click += new System.EventHandler(this.btnLoadTexture_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -435,12 +575,16 @@ namespace GK_Projekt2
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tlpMain.ResumeLayout(false);
             this.flpMenu.ResumeLayout(false);
             this.flpMenu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).EndInit();
+            this.flpRadioButtons.ResumeLayout(false);
+            this.flpRadioButtons.PerformLayout();
             this.tlpSliders.ResumeLayout(false);
             this.tlpSliders.PerformLayout();
+            this.pPictureBoxPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -477,6 +621,17 @@ namespace GK_Projekt2
         private HScrollBar sbLightR;
         private Label lblLightR;
         private Button btnStopAnimation;
+        private Panel pPictureBoxPanel;
+        private FlowLayoutPanel flpRadioButtons;
+        private RadioButton rbFixedObjectColor;
+        private RadioButton rbTextureObjectColor;
+        private HScrollBar sbObjectB;
+        private Label lblObjectB;
+        private HScrollBar sbObjectG;
+        private Label lblObjectG;
+        private HScrollBar sbObjectR;
+        private Label lblObjectR;
+        private Button btnLoadTexture;
     }
 
 }
