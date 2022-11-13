@@ -33,6 +33,7 @@ namespace GK_Projekt2
             this.btnImport = new System.Windows.Forms.Button();
             this.tlpMain = new System.Windows.Forms.TableLayoutPanel();
             this.flpMenu = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnLoadTexture = new System.Windows.Forms.Button();
             this.btnAnimation = new System.Windows.Forms.Button();
             this.btnStopAnimation = new System.Windows.Forms.Button();
             this.cbMesh = new System.Windows.Forms.CheckBox();
@@ -69,7 +70,6 @@ namespace GK_Projekt2
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnLoadTexture = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.flpMenu.SuspendLayout();
             this.flpRadioButtons.SuspendLayout();
@@ -126,6 +126,17 @@ namespace GK_Projekt2
             this.flpMenu.Name = "flpMenu";
             this.flpMenu.Size = new System.Drawing.Size(800, 88);
             this.flpMenu.TabIndex = 3;
+            // 
+            // btnLoadTexture
+            // 
+            this.btnLoadTexture.Location = new System.Drawing.Point(88, 5);
+            this.btnLoadTexture.Margin = new System.Windows.Forms.Padding(5);
+            this.btnLoadTexture.Name = "btnLoadTexture";
+            this.btnLoadTexture.Size = new System.Drawing.Size(73, 77);
+            this.btnLoadTexture.TabIndex = 5;
+            this.btnLoadTexture.Text = "Load Texture";
+            this.btnLoadTexture.UseVisualStyleBackColor = true;
+            this.btnLoadTexture.Click += new System.EventHandler(this.btnLoadTexture_Click);
             // 
             // btnAnimation
             // 
@@ -555,17 +566,6 @@ namespace GK_Projekt2
             this.label2.TabIndex = 10;
             this.label2.Text = "Ks value";
             // 
-            // btnLoadTexture
-            // 
-            this.btnLoadTexture.Location = new System.Drawing.Point(88, 5);
-            this.btnLoadTexture.Margin = new System.Windows.Forms.Padding(5);
-            this.btnLoadTexture.Name = "btnLoadTexture";
-            this.btnLoadTexture.Size = new System.Drawing.Size(73, 77);
-            this.btnLoadTexture.TabIndex = 5;
-            this.btnLoadTexture.Text = "Load Texture";
-            this.btnLoadTexture.UseVisualStyleBackColor = true;
-            this.btnLoadTexture.Click += new System.EventHandler(this.btnLoadTexture_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -632,6 +632,7 @@ namespace GK_Projekt2
         private HScrollBar sbObjectR;
         private Label lblObjectR;
         private Button btnLoadTexture;
+        private Label lblFPS;
     }
 
 }

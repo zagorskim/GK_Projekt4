@@ -30,22 +30,11 @@ namespace GK_Projekt2
         private static int lastFrameRate;
         private static int frameRate;
 
-        public static void CalculateFrameRate()
-        {
-            if (System.Environment.TickCount - lastTick >= 1000)
-            {
-                lastFrameRate = frameRate;
-                frameRate = 0;
-                lastTick = System.Environment.TickCount;
-            }
-            frameRate++;
-            System.Diagnostics.Debug.WriteLine(lastFrameRate);
-        }
-
         public Form1()
         {
             InitializeComponent();
             _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
+            _fastBitmap = new FastBitmap(_bitmap);
             _texture = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
             _fastBitmap = new FastBitmap(_bitmap);
             _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
@@ -55,7 +44,7 @@ namespace GK_Projekt2
             (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
             _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
             sbLightZ.Value= sbLightZ.Maximum * 2 / 3;
-            DrawMesh();
+            DrawObject();
             animationMutex = new System.Threading.Mutex();
         }
 
@@ -68,27 +57,35 @@ namespace GK_Projekt2
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var obj = new Obj();
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            if (!animationInProgress)
             {
-                dialog.Filter = "obj files (*.obj)|*.obj";
-                dialog.FilterIndex = 2;
-                dialog.RestoreDirectory = true;
-
-                if (dialog.ShowDialog() == DialogResult.OK)
+                _bitmap = new Bitmap(pbCanvas.Image.Width + 2, pbCanvas.Image.Height + 2);
+                _fastBitmap = new FastBitmap(_bitmap);
+                var obj = new Obj();
+                using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    var filePath = dialog.FileName;
-                    obj.LoadObj(dialog.OpenFile());
-                    _loadedObject = obj;
-                    ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
-                    (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                    _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
-                    DrawMesh();
+                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
+                    dialog.Filter = "obj files (*.obj)|*.obj";
+                    dialog.FilterIndex = 2;
+                    dialog.RestoreDirectory = true;
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var filePath = dialog.FileName;
+                        obj.LoadObj(dialog.OpenFile());
+                        _loadedObject = obj;
+                        ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
+                        (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+                        SetFillerValues();
+                        if (!animationInProgress)
+                            DrawObject();
+                    }
                 }
             }
         }
 
-        public void DrawMesh()
+        public void DrawObject()
         {
             _fastBitmap.Lock();
             FillMesh(_fastBitmap);
@@ -160,65 +157,76 @@ namespace GK_Projekt2
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.kd = (double)((HScrollBar)sender).Value / 100;
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbKs_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.ks = (double)((HScrollBar)sender).Value / 100;
-            DrawMesh();
+                _filler.ks = (double)((HScrollBar)sender).Value / 100;
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightX_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item1 = (int)(pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
-            DrawMesh();
+                _filler.light.Item1 = (int)(pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightY_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.light.Item2 = (int)(pbCanvas.Width * (double)((HScrollBar)sender).Value / 100);
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.light.Item3 = (int)(pbCanvas.Height * 1.5 * (double)((HScrollBar)sender).Value / 100);
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbm_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.m = (double)((HScrollBar)sender).Value;
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightR_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Il.Item1 = (double)((HScrollBar)sender).Value / 100;
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightG_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Il.Item2 = (double)((HScrollBar)sender).Value / 100;
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightB_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Il.Item3 = (double)((HScrollBar)sender).Value / 100;
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void cbMesh_CheckedChanged(object sender, EventArgs e)
         {
-            DrawMesh();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private async void btnAnimation_Click(object sender, EventArgs e)
         {
-            await Task.Run(() => Animation());
+            if(!animationInProgress)
+                await Task.Run(() => Animation());
         }
 
         public void Animation()
@@ -234,7 +242,7 @@ namespace GK_Projekt2
                     _filler.light.Item1 = i;
                     double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                     _filler.light.Item2 = (int)y;
-                    DrawMesh();
+                    DrawObject();
                     CalculateFrameRate();
                 }
                 for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
@@ -242,11 +250,24 @@ namespace GK_Projekt2
                     _filler.light.Item1 = i;
                     double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                     _filler.light.Item2 = (int)y;
-                    DrawMesh();
+                    if(y < 10000)
+                    DrawObject();
                     CalculateFrameRate();
                 }
             }
             animationInProgress = false;
+        }
+
+        public static void CalculateFrameRate()
+        {
+            if (System.Environment.TickCount - lastTick >= 1000)
+            {
+                lastFrameRate = frameRate;
+                frameRate = 0;
+                lastTick = System.Environment.TickCount;
+            }
+            frameRate++;
+            System.Diagnostics.Debug.WriteLine(lastFrameRate);
         }
 
         private void btnStopAnimation_Click(object sender, EventArgs e)
@@ -256,60 +277,78 @@ namespace GK_Projekt2
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            int temp = Math.Min(pPictureBoxPanel.Width, pPictureBoxPanel.Height);
-            pbCanvas.Width = temp;
-            pbCanvas.Height = temp;
-            pbCanvas.Size = new Size(temp, temp);
-            _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
-            _fastBitmap = new FastBitmap(_bitmap);
-            (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
-            DrawMesh();
+            if (!animationInProgress)
+            {
+                int temp = Math.Min(pPictureBoxPanel.Width, pPictureBoxPanel.Height);
+                pbCanvas.Width = temp;
+                pbCanvas.Height = temp;
+                pbCanvas.Size = new Size(temp, temp);
+                _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
+                _fastBitmap = new FastBitmap(_bitmap);
+                (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
+                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+                DrawObject();
+            }
         }
 
         private void sbObjectR_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Io.Item1 = (double)((HScrollBar)sender).Value / 100;
-            if (_filler.textureColor == false)
-                DrawMesh();
+            if (_filler.textureColor == false && !animationInProgress)
+                DrawObject();
         }
 
         private void sbObjectG_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Io.Item2 = (double)((HScrollBar)sender).Value / 100;
-            if (_filler.textureColor == false)
-                DrawMesh();
+            if (_filler.textureColor == false && !animationInProgress)
+                DrawObject();
         }
 
         private void sbObjectB_Scroll(object sender, ScrollEventArgs e)
         {
             _filler.Io.Item3 = (double)((HScrollBar)sender).Value / 100;
-            if(_filler.textureColor == false)
-                DrawMesh();
+            if(_filler.textureColor == false && !animationInProgress)
+                DrawObject();
         }
 
         private void rbFixedObjectColor_CheckedChanged(object sender, EventArgs e)
         {
             _filler.textureColor = !rbFixedObjectColor.Checked;
-            DrawMesh();
+            if(!animationInProgress)
+                DrawObject();
         }
 
         private void btnLoadTexture_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            if (!animationInProgress)
             {
-                dialog.Filter = "jpg files (*.jpg)|*.jpg";
-                dialog.FilterIndex = 2;
-                dialog.RestoreDirectory = true;
-
-                if (dialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    var filePath = dialog.FileName;
-                    _texture = new Bitmap(Image.FromFile(filePath));
-                    _filler._texture = this._texture;
-                    DrawMesh();
+                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
+                    dialog.Filter = "jpg files (*.jpg)|*.jpg";
+                    dialog.FilterIndex = 2;
+                    dialog.RestoreDirectory = true;
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var filePath = dialog.FileName;
+                        _texture = new Bitmap(Image.FromFile(filePath));
+                        _filler._texture = this._texture;
+                        DrawObject();
+                    }
                 }
             }
+        }
+
+        private void SetFillerValues()
+        {
+            _filler.light = (sbLightX.Value * pbCanvas.Height / 100, sbLightY.Value * pbCanvas.Height / 100, (int)(sbLightZ.Value * pbCanvas.Height * 1.5 / 100));
+            _filler.ks = sbKs.Value / 100;
+            _filler.kd = sbKd.Value / 100;
+            _filler.m = sbm.Value;
+            _filler.Il = (sbLightR.Value / 100, sbLightG.Value / 100, sbLightB.Value / 100);
+            _filler.Io = (sbObjectR.Value / 100, sbObjectG.Value / 100, sbObjectB.Value / 100);
         }
     }
 }
