@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Authors>Luiz Fernando</Authors>
+    <Product>FastBitmap</Product>
+    <Copyright>Copyright © Luiz Fernando 2017</Copyright>
+    <Description>A fast C# Bitmap wrapping layer.</Description>
+    <Version>2.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>imaging bitmap</PackageTags>
+    <PackageProjectUrl>https://github.com/LuizZak/FastBitmap/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LuizZak/FastBitmap/</RepositoryUrl>
+    <PackageReleaseNotes>.NET Standard 2.0 support via @UlyssesWu</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+  </ItemGroup>
+</Project>
