@@ -48,7 +48,7 @@ namespace GK_Projekt2
             ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
             (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
             _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
-            sbLightZ.Value= sbLightZ.Maximum * 2 / 3;
+            sbLightZ.Value= sbLightZ.Maximum / 2;
             DrawObject();
             animationMutex = new System.Threading.Mutex();
         }
@@ -106,10 +106,10 @@ namespace GK_Projekt2
 
         public void DrawObjectAnimation()
         {
-                _fastBitmap.Lock();
-                FillMesh(_fastBitmap);
-                _fastBitmap.Unlock();
-                if (cbMesh.Checked)
+            _fastBitmap.Lock();
+            FillMesh(_fastBitmap);
+            _fastBitmap.Unlock();
+            if (cbMesh.Checked)
                     DrawLines(_bitmap, System.Drawing.Color.Black, 1);
                 pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
         }
@@ -134,14 +134,17 @@ namespace GK_Projekt2
             {
                 temp[i % polySize] = (ScaledVertexList[i].Item1, ScaledVertexList[i].Item2);
                 if (i % polySize == 2)
-                    _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4);
+                {
+                    //var t = new Thread(() => _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4));
+                    //t.Start();
+                    _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4); 
+                }
             }
         }
 
         public (int, int, int) ScaleToCurrentSize(double x, double y, double z)
         {
-            // Margin applied (0.99) makes object being not symetrically lightened
-            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.99 + 1) * pbCanvas.Height / 2), (int)((z * 0.99 + 1) * pbCanvas.Height / 2));
+            return ((int)((x * 0.99 + 1) * _bitmap.Height / 2), (int)((y * 0.99 + 1) * _bitmap.Height / 2), (int)((z * 0.99) * _bitmap.Height / 2));
         }
 
 

@@ -20,7 +20,6 @@ namespace GK_Projekt2
         public EdgeTab[] EdgeTable;
         public EdgeTab ActiveEdgeTuple;
         public Obj obj;
-        public List<(int, int, int, Face)> ScaledVertices;
         public Bitmap _texture { get; set; }
         public (int, int, int)[]  ScaledVertexOrder;
         public (double, double, double) Io = (1, 1, 1);
@@ -32,12 +31,12 @@ namespace GK_Projekt2
         public bool normalVectorModified = true;
         public bool vectorInterpolation = true;
         public (int, int, int) light = (0, 0, 0);
+        public Mutex mutex;
         #endregion
 
         public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture)
         {
             this._texture = texture;
-            this.ScaledVertices = ScaledVertices;
             this.ScaledVertexOrder = ScaledVertexOrder;
             this.polyCount = polyCount;
             this.Height = Height;
@@ -45,6 +44,7 @@ namespace GK_Projekt2
             this.Width = Width;
             this.obj = obj;
             EdgeTable = new EdgeTab[Height];
+            mutex = new Mutex();
             for (int i = 0; i < EdgeTable.Length; i++)
                 EdgeTable[i] = new EdgeTab(polyCount);
             ActiveEdgeTuple = new EdgeTab(polyCount);
@@ -127,9 +127,17 @@ namespace GK_Projekt2
                                 coordCount++;
                                 FillFlag = 1;
                             }
-                            if (FillFlag != 0)
-                                for (int x = x1; x <= x2; x++)
-                                    bitmap.SetPixel(x, i, CalculateColor(x, i, face));
+                        if (FillFlag != 0)
+                        {
+                            for (int x = x1; x <= x2; x++)
+                            {
+                                //mutex.WaitOne();
+                                //bitmap.Lock();
+                                bitmap.SetPixel(x, i, CalculateColor(x, i, face));
+                                //bitmap.Unlock();
+                                //mutex.ReleaseMutex();
+                            }
+                        }
                         }
                         j++;
                     }
@@ -346,7 +354,7 @@ namespace GK_Projekt2
         {
             double scaleParameter = Math.Sqrt(Math.Pow(v.Item1, 2) + Math.Pow(v.Item2, 2) + Math.Pow(v.Item3, 2));
             if(scaleParameter == 0)
-                return (0,0,0);
+                return (0, 0, 0);
             return (v.Item1 / scaleParameter, v.Item2 / scaleParameter, v.Item3 / scaleParameter);
         }
 

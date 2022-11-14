@@ -188,6 +188,5 @@ namespace GK_Projekt2
             if (!animationInProgress)
                 await Task.Run(() => Animation());
         }
-
     }
 }
