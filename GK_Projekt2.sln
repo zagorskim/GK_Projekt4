@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GK_Projekt2", "GK_Projekt2\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjParser", "ObjParser\ObjParser\ObjParser.csproj", "{04AA9B94-B460-4E73-BAF0-0154494BFE82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastBitmapLib", "FastBitmap\FastBitmap\FastBitmapLib.csproj", "{3D73E5BE-B485-4456-8E09-B20AF8336D76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastBitmapLib", "FastBitmap\FastBitmap\FastBitmapLib.csproj", "{B786FECC-F4EC-40C8-9C79-31A56805BEA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D73E5BE-B485-4456-8E09-B20AF8336D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D73E5BE-B485-4456-8E09-B20AF8336D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D73E5BE-B485-4456-8E09-B20AF8336D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D73E5BE-B485-4456-8E09-B20AF8336D76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B786FECC-F4EC-40C8-9C79-31A56805BEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B786FECC-F4EC-40C8-9C79-31A56805BEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B786FECC-F4EC-40C8-9C79-31A56805BEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B786FECC-F4EC-40C8-9C79-31A56805BEA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
