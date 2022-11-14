@@ -14,6 +14,8 @@ namespace GK_Projekt2
 // in order to quicken up the process of doing this project :) (also extended it with some other functionalities that I needed)
     public partial class Form1 : Form
     {
+        #region fields
+
         private const int polySize = 3;
         private Obj _loadedObject { get; set; }
         public List<((int, int, int), (int, int, int))> ScaledEdgeList;
@@ -30,12 +32,14 @@ namespace GK_Projekt2
         private static int lastFrameRate;
         private static int frameRate;
 
+        #endregion
+
         public Form1()
         {
             InitializeComponent();
             _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
             _fastBitmap = new FastBitmap(_bitmap);
-            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
             _texture = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
             _fastBitmap = new FastBitmap(_bitmap);
             _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
@@ -169,81 +173,6 @@ namespace GK_Projekt2
             return (ret1, ret2, ret3);
         }
 
-        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.kd = (double)((HScrollBar)sender).Value / 100;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbKs_Scroll(object sender, ScrollEventArgs e)
-        {
-                _filler.ks = (double)((HScrollBar)sender).Value / 100;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightX_Scroll(object sender, ScrollEventArgs e)
-        {
-                _filler.light.Item1 = (int)(_bitmap.Height * (double)((HScrollBar)sender).Value / 100);
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightY_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.light.Item2 = (int)(_bitmap.Width * (double)((HScrollBar)sender).Value / 100);
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.light.Item3 = (int)(_bitmap.Height / 2 + pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbm_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.m = (double)((HScrollBar)sender).Value;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightR_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Il.Item1 = (double)((HScrollBar)sender).Value / 100;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightG_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Il.Item2 = (double)((HScrollBar)sender).Value / 100;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void sbLightB_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Il.Item3 = (double)((HScrollBar)sender).Value / 100;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void cbMesh_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private async void btnAnimation_Click(object sender, EventArgs e)
-        {
-            if(!animationInProgress)
-                await Task.Run(() => Animation());
-        }
-
         public void Animation()
         {
             animationInProgress = true;
@@ -283,111 +212,6 @@ namespace GK_Projekt2
             }
             frameRate++;
             System.Diagnostics.Debug.WriteLine(lastFrameRate);
-        }
-
-        private void btnStopAnimation_Click(object sender, EventArgs e)
-        {
-            animationInProgress = false;
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            if (!animationInProgress)
-            {
-                int temp = Math.Min(pPictureBoxPanel.Width, pPictureBoxPanel.Height);
-                pbCanvas.Width = temp;
-                pbCanvas.Height = temp;
-                pbCanvas.Size = new Size(temp, temp);
-                _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
-                _fastBitmap = new FastBitmap(_bitmap);
-                (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
-                _filler._texture = new Bitmap(_filler._texture, new Size(_bitmap.Width, _bitmap.Height));
-                SetFillerValues();
-                DrawObject();
-            }
-        }
-
-        private void sbObjectR_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Io.Item1 = (double)((HScrollBar)sender).Value / 100;
-            if (_filler.textureColor == false && !animationInProgress)
-                DrawObject();
-        }
-
-        private void sbObjectG_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Io.Item2 = (double)((HScrollBar)sender).Value / 100;
-            if (_filler.textureColor == false && !animationInProgress)
-                DrawObject();
-        }
-
-        private void sbObjectB_Scroll(object sender, ScrollEventArgs e)
-        {
-            _filler.Io.Item3 = (double)((HScrollBar)sender).Value / 100;
-            if(_filler.textureColor == false && !animationInProgress)
-                DrawObject();
-        }
-
-        private void rbFixedObjectColor_CheckedChanged(object sender, EventArgs e)
-        {
-            _filler.textureColor = !rbFixedObjectColor.Checked;
-            if(!animationInProgress)
-                DrawObject();
-        }
-
-        private void btnLoadTexture_Click(object sender, EventArgs e)
-        {
-            if (!animationInProgress)
-            {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
-                    dialog.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png";
-                    dialog.FilterIndex = 2;
-                    dialog.RestoreDirectory = true;
-
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        var filePath = dialog.FileName;
-                        _texture = new Bitmap(Image.FromFile(filePath));
-                        _filler._texture = new Bitmap(this._texture, new Size(_bitmap.Width, _bitmap.Height));
-                        DrawObject();
-                    }
-                }
-            }
-        }
-
-        private void SetFillerValues()
-        {
-            _filler.textureColor = rbTextureObjectColor.Checked;
-            _filler.normalVectorModified = cbModifiedNormalVector.Checked;
-            _filler.light = (sbLightX.Value * pbCanvas.Height / 100, sbLightY.Value * pbCanvas.Height / 100, (int)(sbLightZ.Value * pbCanvas.Height * 1.5 / 100));
-            _filler.ks = (double)(sbKs.Value / 100m);
-            _filler.kd = (double)(sbKd.Value / 100m);
-            _filler.m = sbm.Value;
-            _filler.Il = (sbLightR.Value / 100, sbLightG.Value / 100, sbLightB.Value / 100);
-            _filler.Io = (sbObjectR.Value / 100, sbObjectG.Value / 100, sbObjectB.Value / 100);
-        }
-
-        private void cbModifiedNormalVector_CheckedChanged(object sender, EventArgs e)
-        {
-            _filler.normalVectorModified = ((CheckBox)sender).Checked;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void rbVectors_CheckedChanged(object sender, EventArgs e)
-        {
-            _filler.vectorInterpolation = ((RadioButton)sender).Checked;
-            if (!animationInProgress)
-                DrawObject();
-        }
-
-        private void tlpMain_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (!animationInProgress)
-                DrawObject();
         }
     }
 }

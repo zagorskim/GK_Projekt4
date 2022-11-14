@@ -277,7 +277,7 @@ namespace GK_Projekt2
             this.flpInterpolationMethod.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flpInterpolationMethod.Location = new System.Drawing.Point(634, 7);
             this.flpInterpolationMethod.Name = "flpInterpolationMethod";
-            this.flpInterpolationMethod.Size = new System.Drawing.Size(159, 73);
+            this.flpInterpolationMethod.Size = new System.Drawing.Size(129, 73);
             this.flpInterpolationMethod.TabIndex = 8;
             // 
             // lblInterpolation
@@ -374,6 +374,7 @@ namespace GK_Projekt2
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpSliders.Size = new System.Drawing.Size(234, 794);
             this.tlpSliders.TabIndex = 4;
+            this.tlpSliders.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
             // sbObjectB
             // 
@@ -631,6 +632,7 @@ namespace GK_Projekt2
             this.pbCanvas.Size = new System.Drawing.Size(540, 540);
             this.pbCanvas.TabIndex = 2;
             this.pbCanvas.TabStop = false;
+            this.pbCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
             // tableLayoutPanel1
             // 

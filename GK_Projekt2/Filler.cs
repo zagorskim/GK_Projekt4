@@ -12,6 +12,7 @@ namespace GK_Projekt2
 {
     public class Filler
     {
+        #region fields
         public const int maxByte = 255;
         public int Height;
         public int Width;
@@ -31,6 +32,7 @@ namespace GK_Projekt2
         public bool normalVectorModified = true;
         public bool vectorInterpolation = true;
         public (int, int, int) light = (0, 0, 0);
+        #endregion
 
         public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture)
         {
@@ -237,6 +239,8 @@ namespace GK_Projekt2
             }
         }
 
+        #region Helper Functions
+
         private void InsertSort(EdgeTab edgeTab)
         {
             int i, j;
@@ -389,7 +393,11 @@ namespace GK_Projekt2
         {
             return (A.Item2 * B.Item3 - A.Item3 * B.Item2, A.Item3 * B.Item1 - A.Item1 * B.Item3, A.Item1 * B.Item2 - A.Item2 * B.Item1);
         }
+
+        #endregion
     }
+
+    #region types
 
     public struct Bucket
     {
@@ -409,4 +417,6 @@ namespace GK_Projekt2
             buckets = new Bucket[polyCount];
         }
     }
+
+    #endregion
 }
