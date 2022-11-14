@@ -36,10 +36,18 @@ namespace GK_Projekt2
             this.btnLoadTexture = new System.Windows.Forms.Button();
             this.btnAnimation = new System.Windows.Forms.Button();
             this.btnStopAnimation = new System.Windows.Forms.Button();
+            this.flpCheckboxes = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblCheckboxes = new System.Windows.Forms.Label();
             this.cbMesh = new System.Windows.Forms.CheckBox();
+            this.cbModifiedNormalVector = new System.Windows.Forms.CheckBox();
             this.flpRadioButtons = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblObjectColorControl = new System.Windows.Forms.Label();
             this.rbFixedObjectColor = new System.Windows.Forms.RadioButton();
             this.rbTextureObjectColor = new System.Windows.Forms.RadioButton();
+            this.flpInterpolationMethod = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblInterpolation = new System.Windows.Forms.Label();
+            this.rbVectors = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.tlpSliders = new System.Windows.Forms.TableLayoutPanel();
             this.sbObjectB = new System.Windows.Forms.HScrollBar();
             this.lblObjectB = new System.Windows.Forms.Label();
@@ -72,7 +80,9 @@ namespace GK_Projekt2
             this.label2 = new System.Windows.Forms.Label();
             this.tlpMain.SuspendLayout();
             this.flpMenu.SuspendLayout();
+            this.flpCheckboxes.SuspendLayout();
             this.flpRadioButtons.SuspendLayout();
+            this.flpInterpolationMethod.SuspendLayout();
             this.tlpSliders.SuspendLayout();
             this.pPictureBoxPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
@@ -84,7 +94,7 @@ namespace GK_Projekt2
             this.btnImport.Location = new System.Drawing.Point(5, 5);
             this.btnImport.Margin = new System.Windows.Forms.Padding(5);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(73, 77);
+            this.btnImport.Size = new System.Drawing.Size(53, 77);
             this.btnImport.TabIndex = 0;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -108,6 +118,7 @@ namespace GK_Projekt2
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpMain.Size = new System.Drawing.Size(800, 888);
             this.tlpMain.TabIndex = 1;
+            this.tlpMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
             // flpMenu
             // 
@@ -118,8 +129,9 @@ namespace GK_Projekt2
             this.flpMenu.Controls.Add(this.btnLoadTexture);
             this.flpMenu.Controls.Add(this.btnAnimation);
             this.flpMenu.Controls.Add(this.btnStopAnimation);
-            this.flpMenu.Controls.Add(this.cbMesh);
+            this.flpMenu.Controls.Add(this.flpCheckboxes);
             this.flpMenu.Controls.Add(this.flpRadioButtons);
+            this.flpMenu.Controls.Add(this.flpInterpolationMethod);
             this.flpMenu.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpMenu.Location = new System.Drawing.Point(0, 0);
             this.flpMenu.Margin = new System.Windows.Forms.Padding(0);
@@ -129,10 +141,10 @@ namespace GK_Projekt2
             // 
             // btnLoadTexture
             // 
-            this.btnLoadTexture.Location = new System.Drawing.Point(88, 5);
+            this.btnLoadTexture.Location = new System.Drawing.Point(68, 5);
             this.btnLoadTexture.Margin = new System.Windows.Forms.Padding(5);
             this.btnLoadTexture.Name = "btnLoadTexture";
-            this.btnLoadTexture.Size = new System.Drawing.Size(73, 77);
+            this.btnLoadTexture.Size = new System.Drawing.Size(54, 77);
             this.btnLoadTexture.TabIndex = 5;
             this.btnLoadTexture.Text = "Load Texture";
             this.btnLoadTexture.UseVisualStyleBackColor = true;
@@ -140,7 +152,7 @@ namespace GK_Projekt2
             // 
             // btnAnimation
             // 
-            this.btnAnimation.Location = new System.Drawing.Point(171, 5);
+            this.btnAnimation.Location = new System.Drawing.Point(132, 5);
             this.btnAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnAnimation.Name = "btnAnimation";
             this.btnAnimation.Size = new System.Drawing.Size(71, 77);
@@ -151,7 +163,7 @@ namespace GK_Projekt2
             // 
             // btnStopAnimation
             // 
-            this.btnStopAnimation.Location = new System.Drawing.Point(252, 5);
+            this.btnStopAnimation.Location = new System.Drawing.Point(213, 5);
             this.btnStopAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnStopAnimation.Name = "btnStopAnimation";
             this.btnStopAnimation.Size = new System.Drawing.Size(71, 77);
@@ -160,35 +172,82 @@ namespace GK_Projekt2
             this.btnStopAnimation.UseVisualStyleBackColor = true;
             this.btnStopAnimation.Click += new System.EventHandler(this.btnStopAnimation_Click);
             // 
+            // flpCheckboxes
+            // 
+            this.flpCheckboxes.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.flpCheckboxes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flpCheckboxes.Controls.Add(this.lblCheckboxes);
+            this.flpCheckboxes.Controls.Add(this.cbMesh);
+            this.flpCheckboxes.Controls.Add(this.cbModifiedNormalVector);
+            this.flpCheckboxes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpCheckboxes.Location = new System.Drawing.Point(292, 7);
+            this.flpCheckboxes.Name = "flpCheckboxes";
+            this.flpCheckboxes.Size = new System.Drawing.Size(162, 73);
+            this.flpCheckboxes.TabIndex = 7;
+            // 
+            // lblCheckboxes
+            // 
+            this.lblCheckboxes.AutoSize = true;
+            this.lblCheckboxes.Location = new System.Drawing.Point(3, 0);
+            this.lblCheckboxes.Name = "lblCheckboxes";
+            this.lblCheckboxes.Size = new System.Drawing.Size(49, 15);
+            this.lblCheckboxes.TabIndex = 7;
+            this.lblCheckboxes.Text = "Options";
+            // 
             // cbMesh
             // 
             this.cbMesh.AutoSize = true;
             this.cbMesh.Checked = true;
             this.cbMesh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbMesh.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbMesh.Location = new System.Drawing.Point(331, 3);
+            this.cbMesh.Location = new System.Drawing.Point(3, 18);
             this.cbMesh.Name = "cbMesh";
-            this.cbMesh.Size = new System.Drawing.Size(55, 81);
+            this.cbMesh.Size = new System.Drawing.Size(158, 19);
             this.cbMesh.TabIndex = 2;
             this.cbMesh.Text = "Mesh";
             this.cbMesh.UseVisualStyleBackColor = true;
             this.cbMesh.CheckedChanged += new System.EventHandler(this.cbMesh_CheckedChanged);
             // 
+            // cbModifiedNormalVector
+            // 
+            this.cbModifiedNormalVector.AutoSize = true;
+            this.cbModifiedNormalVector.Checked = true;
+            this.cbModifiedNormalVector.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbModifiedNormalVector.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbModifiedNormalVector.Location = new System.Drawing.Point(3, 43);
+            this.cbModifiedNormalVector.Name = "cbModifiedNormalVector";
+            this.cbModifiedNormalVector.Size = new System.Drawing.Size(158, 19);
+            this.cbModifiedNormalVector.TabIndex = 6;
+            this.cbModifiedNormalVector.Text = "Normal Vectors Modified";
+            this.cbModifiedNormalVector.UseVisualStyleBackColor = true;
+            this.cbModifiedNormalVector.CheckedChanged += new System.EventHandler(this.cbModifiedNormalVector_CheckedChanged);
+            // 
             // flpRadioButtons
             // 
+            this.flpRadioButtons.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.flpRadioButtons.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flpRadioButtons.Controls.Add(this.lblObjectColorControl);
             this.flpRadioButtons.Controls.Add(this.rbFixedObjectColor);
             this.flpRadioButtons.Controls.Add(this.rbTextureObjectColor);
             this.flpRadioButtons.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpRadioButtons.Location = new System.Drawing.Point(392, 17);
-            this.flpRadioButtons.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this.flpRadioButtons.Location = new System.Drawing.Point(460, 7);
             this.flpRadioButtons.Name = "flpRadioButtons";
-            this.flpRadioButtons.Size = new System.Drawing.Size(168, 52);
+            this.flpRadioButtons.Size = new System.Drawing.Size(168, 73);
             this.flpRadioButtons.TabIndex = 4;
+            // 
+            // lblObjectColorControl
+            // 
+            this.lblObjectColorControl.AutoSize = true;
+            this.lblObjectColorControl.Location = new System.Drawing.Point(3, 0);
+            this.lblObjectColorControl.Name = "lblObjectColorControl";
+            this.lblObjectColorControl.Size = new System.Drawing.Size(117, 15);
+            this.lblObjectColorControl.TabIndex = 4;
+            this.lblObjectColorControl.Text = "Object Color Control";
             // 
             // rbFixedObjectColor
             // 
             this.rbFixedObjectColor.AutoSize = true;
-            this.rbFixedObjectColor.Location = new System.Drawing.Point(3, 3);
+            this.rbFixedObjectColor.Location = new System.Drawing.Point(3, 18);
             this.rbFixedObjectColor.Name = "rbFixedObjectColor";
             this.rbFixedObjectColor.Size = new System.Drawing.Size(123, 19);
             this.rbFixedObjectColor.TabIndex = 2;
@@ -200,13 +259,58 @@ namespace GK_Projekt2
             // 
             this.rbTextureObjectColor.AutoSize = true;
             this.rbTextureObjectColor.Checked = true;
-            this.rbTextureObjectColor.Location = new System.Drawing.Point(3, 28);
+            this.rbTextureObjectColor.Location = new System.Drawing.Point(3, 43);
             this.rbTextureObjectColor.Name = "rbTextureObjectColor";
             this.rbTextureObjectColor.Size = new System.Drawing.Size(164, 19);
             this.rbTextureObjectColor.TabIndex = 3;
             this.rbTextureObjectColor.TabStop = true;
             this.rbTextureObjectColor.Text = "Object Color From Texture";
             this.rbTextureObjectColor.UseVisualStyleBackColor = true;
+            // 
+            // flpInterpolationMethod
+            // 
+            this.flpInterpolationMethod.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.flpInterpolationMethod.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flpInterpolationMethod.Controls.Add(this.lblInterpolation);
+            this.flpInterpolationMethod.Controls.Add(this.rbVectors);
+            this.flpInterpolationMethod.Controls.Add(this.radioButton2);
+            this.flpInterpolationMethod.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpInterpolationMethod.Location = new System.Drawing.Point(634, 7);
+            this.flpInterpolationMethod.Name = "flpInterpolationMethod";
+            this.flpInterpolationMethod.Size = new System.Drawing.Size(159, 73);
+            this.flpInterpolationMethod.TabIndex = 8;
+            // 
+            // lblInterpolation
+            // 
+            this.lblInterpolation.AutoSize = true;
+            this.lblInterpolation.Location = new System.Drawing.Point(3, 0);
+            this.lblInterpolation.Name = "lblInterpolation";
+            this.lblInterpolation.Size = new System.Drawing.Size(120, 15);
+            this.lblInterpolation.TabIndex = 4;
+            this.lblInterpolation.Text = "Interpolation Method";
+            // 
+            // rbVectors
+            // 
+            this.rbVectors.AutoSize = true;
+            this.rbVectors.Checked = true;
+            this.rbVectors.Location = new System.Drawing.Point(3, 18);
+            this.rbVectors.Name = "rbVectors";
+            this.rbVectors.Size = new System.Drawing.Size(63, 19);
+            this.rbVectors.TabIndex = 2;
+            this.rbVectors.TabStop = true;
+            this.rbVectors.Text = "Vectors";
+            this.rbVectors.UseVisualStyleBackColor = true;
+            this.rbVectors.CheckedChanged += new System.EventHandler(this.rbVectors_CheckedChanged);
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(3, 43);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(59, 19);
+            this.radioButton2.TabIndex = 3;
+            this.radioButton2.Text = "Colors";
+            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // tlpSliders
             // 
@@ -578,9 +682,12 @@ namespace GK_Projekt2
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tlpMain.ResumeLayout(false);
             this.flpMenu.ResumeLayout(false);
-            this.flpMenu.PerformLayout();
+            this.flpCheckboxes.ResumeLayout(false);
+            this.flpCheckboxes.PerformLayout();
             this.flpRadioButtons.ResumeLayout(false);
             this.flpRadioButtons.PerformLayout();
+            this.flpInterpolationMethod.ResumeLayout(false);
+            this.flpInterpolationMethod.PerformLayout();
             this.tlpSliders.ResumeLayout(false);
             this.tlpSliders.PerformLayout();
             this.pPictureBoxPanel.ResumeLayout(false);
@@ -632,7 +739,14 @@ namespace GK_Projekt2
         private HScrollBar sbObjectR;
         private Label lblObjectR;
         private Button btnLoadTexture;
-        private Label lblFPS;
+        private Label lblObjectColorControl;
+        private CheckBox cbModifiedNormalVector;
+        private FlowLayoutPanel flpCheckboxes;
+        private Label lblCheckboxes;
+        private FlowLayoutPanel flpInterpolationMethod;
+        private Label lblInterpolation;
+        private RadioButton rbVectors;
+        private RadioButton radioButton2;
     }
 
 }

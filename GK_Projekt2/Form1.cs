@@ -35,7 +35,8 @@ namespace GK_Projekt2
             InitializeComponent();
             _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
             _fastBitmap = new FastBitmap(_bitmap);
-            _texture = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+            _texture = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
             _fastBitmap = new FastBitmap(_bitmap);
             _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
             ScaledEdgeList = new List<((int, int, int), (int, int, int))>();
@@ -85,14 +86,28 @@ namespace GK_Projekt2
             }
         }
 
-        public void DrawObject()
+        // Asynchronous drawing provides better UI behaviour, but sometimes doesn't complete calculations, disabling async drawing will fix it
+        public async void DrawObject()
         {
-            _fastBitmap.Lock();
-            FillMesh(_fastBitmap);
-            _fastBitmap.Unlock();
-            if(cbMesh.Checked)
-                DrawLines(_bitmap, System.Drawing.Color.Black, 1);
-            pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+            if (!_fastBitmap.Locked)
+            {
+                _fastBitmap.Lock();
+                await Task.Run(() => FillMesh(_fastBitmap));
+                _fastBitmap.Unlock();
+                if (cbMesh.Checked)
+                    DrawLines(_bitmap, System.Drawing.Color.Black, 1);
+                pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+            }
+        }
+
+        public void DrawObjectAnimation()
+        {
+                _fastBitmap.Lock();
+                FillMesh(_fastBitmap);
+                _fastBitmap.Unlock();
+                if (cbMesh.Checked)
+                    DrawLines(_bitmap, System.Drawing.Color.Black, 1);
+                pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
         }
 
         public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size)
@@ -122,7 +137,7 @@ namespace GK_Projekt2
         public (int, int, int) ScaleToCurrentSize(double x, double y, double z)
         {
             // Margin applied (0.99) makes object being not symetrically lightened
-            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.999 + 1) * pbCanvas.Height / 2), (int)((z * 0.999 + 1) * pbCanvas.Height / 2));
+            return ((int)((x * 0.99 + 1) * pbCanvas.Width / 2), (int)((y * 0.99 + 1) * pbCanvas.Height / 2), (int)((z * 0.99 + 1) * pbCanvas.Height / 2));
         }
 
 
@@ -170,21 +185,21 @@ namespace GK_Projekt2
 
         private void sbLightX_Scroll(object sender, ScrollEventArgs e)
         {
-                _filler.light.Item1 = (int)(pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
+                _filler.light.Item1 = (int)(_bitmap.Height * (double)((HScrollBar)sender).Value / 100);
             if (!animationInProgress)
                 DrawObject();
         }
 
         private void sbLightY_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item2 = (int)(pbCanvas.Width * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item2 = (int)(_bitmap.Width * (double)((HScrollBar)sender).Value / 100);
             if (!animationInProgress)
                 DrawObject();
         }
 
         private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item3 = (int)(pbCanvas.Height * 1.5 * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item3 = (int)(_bitmap.Height / 2 + pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
             if (!animationInProgress)
                 DrawObject();
         }
@@ -242,7 +257,7 @@ namespace GK_Projekt2
                     _filler.light.Item1 = i;
                     double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                     _filler.light.Item2 = (int)y;
-                    DrawObject();
+                    DrawObjectAnimation();
                     CalculateFrameRate();
                 }
                 for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
@@ -251,7 +266,7 @@ namespace GK_Projekt2
                     double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
                     _filler.light.Item2 = (int)y;
                     if(y < 10000)
-                    DrawObject();
+                    DrawObjectAnimation();
                     CalculateFrameRate();
                 }
             }
@@ -287,6 +302,8 @@ namespace GK_Projekt2
                 _fastBitmap = new FastBitmap(_bitmap);
                 (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
                 _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+                _filler._texture = new Bitmap(_filler._texture, new Size(_bitmap.Width, _bitmap.Height));
+                SetFillerValues();
                 DrawObject();
             }
         }
@@ -326,7 +343,7 @@ namespace GK_Projekt2
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
                     dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
-                    dialog.Filter = "jpg files (*.jpg)|*.jpg";
+                    dialog.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png";
                     dialog.FilterIndex = 2;
                     dialog.RestoreDirectory = true;
 
@@ -334,7 +351,7 @@ namespace GK_Projekt2
                     {
                         var filePath = dialog.FileName;
                         _texture = new Bitmap(Image.FromFile(filePath));
-                        _filler._texture = this._texture;
+                        _filler._texture = new Bitmap(this._texture, new Size(_bitmap.Width, _bitmap.Height));
                         DrawObject();
                     }
                 }
@@ -343,12 +360,34 @@ namespace GK_Projekt2
 
         private void SetFillerValues()
         {
+            _filler.textureColor = rbTextureObjectColor.Checked;
+            _filler.normalVectorModified = cbModifiedNormalVector.Checked;
             _filler.light = (sbLightX.Value * pbCanvas.Height / 100, sbLightY.Value * pbCanvas.Height / 100, (int)(sbLightZ.Value * pbCanvas.Height * 1.5 / 100));
-            _filler.ks = sbKs.Value / 100;
-            _filler.kd = sbKd.Value / 100;
+            _filler.ks = (double)(sbKs.Value / 100m);
+            _filler.kd = (double)(sbKd.Value / 100m);
             _filler.m = sbm.Value;
             _filler.Il = (sbLightR.Value / 100, sbLightG.Value / 100, sbLightB.Value / 100);
             _filler.Io = (sbObjectR.Value / 100, sbObjectG.Value / 100, sbObjectB.Value / 100);
+        }
+
+        private void cbModifiedNormalVector_CheckedChanged(object sender, EventArgs e)
+        {
+            _filler.normalVectorModified = ((CheckBox)sender).Checked;
+            if (!animationInProgress)
+                DrawObject();
+        }
+
+        private void rbVectors_CheckedChanged(object sender, EventArgs e)
+        {
+            _filler.vectorInterpolation = ((RadioButton)sender).Checked;
+            if (!animationInProgress)
+                DrawObject();
+        }
+
+        private void tlpMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!animationInProgress)
+                DrawObject();
         }
     }
 }

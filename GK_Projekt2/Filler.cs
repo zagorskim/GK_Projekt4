@@ -28,9 +28,9 @@ namespace GK_Projekt2
         public double ks = 1;
         public double m = 1;
         public bool textureColor = true;
-
+        public bool normalVectorModified = true;
+        public bool vectorInterpolation = true;
         public (int, int, int) light = (0, 0, 0);
-
 
         public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture)
         {
@@ -143,40 +143,100 @@ namespace GK_Projekt2
 
         private System.Drawing.Color CalculateColor(int x, int y, Face face)
         {
-            //TBD something's wrong, light Z parameter somehow influence it's Y parameter
             (double, double, double) I;
+            var color = _texture.GetPixel(x, y);
+            var It = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
             if (textureColor == true)
             {
-                var color = _texture.GetPixel(x, y);
-                I = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
+                I = It;
             }
             else
                 I = this.Io;
+
             var v1 = (obj.NVList[face.NVIndexList[0] - 1].X, obj.NVList[face.NVIndexList[0] - 1].Y, obj.NVList[face.NVIndexList[0] - 1].Z);
             var v2 = (obj.NVList[face.NVIndexList[1] - 1].X, obj.NVList[face.NVIndexList[1] - 1].Y, obj.NVList[face.NVIndexList[1] - 1].Z);
             var v3 = (obj.NVList[face.NVIndexList[2] - 1].X, obj.NVList[face.NVIndexList[2] - 1].Y, obj.NVList[face.NVIndexList[2] - 1].Z);
 
-            var N = NormalizeVector(InterpolateVectors(v1, v2, v3, CalculateBaricentricRatio((x, y),
-                ScaledVertexOrder[face.VertexIndexList[0] - 1],
-                ScaledVertexOrder[face.VertexIndexList[1] - 1],
-                ScaledVertexOrder[face.VertexIndexList[2] - 1])));
-            var L = NormalizeVectorFromVertices((x, y, 
-                (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 + 
-                ScaledVertexOrder[face.VertexIndexList[1] - 1].Item3 + 
-                ScaledVertexOrder[face.VertexIndexList[2] - 1].Item3) / 3), 
-                light);
-            double cosNL = CalculateCosUsingScalarProduct(N, L);
-            cosNL = cosNL > 0 ? cosNL : 0;
-            double cosVR = CalculateCosUsingScalarProduct((0, 0, 1), ( cosNL * N.Item1 - L.Item1, 2 * cosNL * N.Item2 - L.Item2, 2 * cosNL * N.Item3 - L.Item3));
-            cosVR = cosVR > 0 ? cosVR : 0;
-            double r = kd * Il.Item1 * I.Item1 * cosNL + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR, m);
-            double g = kd * Il.Item2 * I.Item2 * cosNL + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR, m);
-            double b = kd * Il.Item3 * I.Item3 * cosNL + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR, m);
-            System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte ? maxByte : r * maxByte), 
-                (int)(g * maxByte > maxByte ? maxByte : g * maxByte), 
-                (int)(b * maxByte > maxByte ? maxByte : b * maxByte));
-            return ret;
+            if (vectorInterpolation)
+            {
+                var N = NormalizeVector(Interpolate(v1, v2, v3, CalculateBaricentricRatio((x, y),
+                    ScaledVertexOrder[face.VertexIndexList[0] - 1],
+                    ScaledVertexOrder[face.VertexIndexList[1] - 1],
+                    ScaledVertexOrder[face.VertexIndexList[2] - 1])));
+                if (normalVectorModified)
+                    N = CalculateNFromTexture(It, N);
+
+                var L = NormalizeVectorFromVertices((x, y,
+                    (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 +
+                    ScaledVertexOrder[face.VertexIndexList[1] - 1].Item3 +
+                    ScaledVertexOrder[face.VertexIndexList[2] - 1].Item3) / 3),
+                    light);
+                double cosNL = CalculateCosUsingScalarProduct(N, L);
+                cosNL = cosNL > 0 ? cosNL : 0;
+                double cosVR = CalculateCosUsingScalarProduct((0, 0, 1), ((double)2m * cosNL * N.Item1 - L.Item1, (double)2m * cosNL * N.Item2 - L.Item2, (double)2m * cosNL * N.Item3 - L.Item3));
+                cosVR = cosVR > 0 ? cosVR : 0;
+                double r = kd * Il.Item1 * I.Item1 * cosNL + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR, m);
+                double g = kd * Il.Item2 * I.Item2 * cosNL + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR, m);
+                double b = kd * Il.Item3 * I.Item3 * cosNL + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR, m);
+                System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte ? maxByte : r * maxByte),
+                    (int)(g * maxByte > maxByte ? maxByte : g * maxByte),
+                    (int)(b * maxByte > maxByte ? maxByte : b * maxByte));
+                return ret;
+            }
+            else 
+            {
+                var N1 = NormalizeVector(v1);
+                var N2 = NormalizeVector(v2);
+                var N3 = NormalizeVector(v3);
+                if (normalVectorModified)
+                {
+                    N1 = CalculateNFromTexture(It, N1);
+                    N2 = CalculateNFromTexture(It, N2);
+                    N3 = CalculateNFromTexture(It, N3);
+                }
+
+                var L = NormalizeVectorFromVertices((x, y,
+                    (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 +
+                    ScaledVertexOrder[face.VertexIndexList[1] - 1].Item3 +
+                    ScaledVertexOrder[face.VertexIndexList[2] - 1].Item3) / 3),
+                    light);
+
+                double cosNL1 = CalculateCosUsingScalarProduct(N1, L);
+                cosNL1 = cosNL1 > 0 ? cosNL1 : 0;
+                double cosNL2 = CalculateCosUsingScalarProduct(N2, L);
+                cosNL2 = cosNL2 > 0 ? cosNL2 : 0;
+                double cosNL3 = CalculateCosUsingScalarProduct(N3, L);
+                cosNL3 = cosNL3 > 0 ? cosNL3 : 0;
+
+                double cosVR1 = CalculateCosUsingScalarProduct((0, 0, 1), ((double)2m * cosNL1 * N1.Item1 - L.Item1, (double)2m * cosNL1 * N1.Item2 - L.Item2, (double)2m * cosNL1 * N1.Item3 - L.Item3));
+                cosVR1 = cosVR1 > 0 ? cosVR1 : 0;
+                double cosVR2 = CalculateCosUsingScalarProduct((0, 0, 1), ((double)2m * cosNL2 * N2.Item1 - L.Item1, (double)2m * cosNL2 * N2.Item2 - L.Item2, (double)2m * cosNL2 * N2.Item3 - L.Item3));
+                cosVR2 = cosVR2 > 0 ? cosVR2 : 0;
+                double cosVR3 = CalculateCosUsingScalarProduct((0, 0, 1), ((double)2m * cosNL3 * N3.Item1 - L.Item1, (double)2m * cosNL3 * N3.Item2 - L.Item2, (double)2m * cosNL3 * N3.Item3 - L.Item3));
+                cosVR3 = cosVR3 > 0 ? cosVR3 : 0;
+
+                double r1 = kd * Il.Item1 * I.Item1 * cosNL1 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR1, m);
+                double g1 = kd * Il.Item2 * I.Item2 * cosNL1 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR1, m);
+                double b1 = kd * Il.Item3 * I.Item3 * cosNL1 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR1, m);
+                double r2 = kd * Il.Item1 * I.Item1 * cosNL2 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR2, m);
+                double g2 = kd * Il.Item2 * I.Item2 * cosNL2 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR2, m);
+                double b2 = kd * Il.Item3 * I.Item3 * cosNL2 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR2, m);
+                double r3 = kd * Il.Item1 * I.Item1 * cosNL3 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR3, m);
+                double g3 = kd * Il.Item2 * I.Item2 * cosNL3 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR3, m);
+                double b3 = kd * Il.Item3 * I.Item3 * cosNL3 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR3, m);
+
+                double r, g, b;
+                (r, g, b) = Interpolate((r1, g1, b1), (r2, g2, b2), (r3, g3, b3), CalculateBaricentricRatio((x, y),
+                    ScaledVertexOrder[face.VertexIndexList[0] - 1],
+                    ScaledVertexOrder[face.VertexIndexList[1] - 1],
+                    ScaledVertexOrder[face.VertexIndexList[2] - 1]));
+                System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte ? maxByte : r * maxByte),
+                    (int)(g * maxByte > maxByte ? maxByte : g * maxByte),
+                    (int)(b * maxByte > maxByte ? maxByte : b * maxByte));
+                return ret;
+            }
         }
+
         private void InsertSort(EdgeTab edgeTab)
         {
             int i, j;
@@ -201,6 +261,7 @@ namespace GK_Projekt2
                 edgeTab.buckets[j + 1].slopeinverse = temp.slopeinverse;
             }
         }
+
         private void StoreEdge(int x1, int y1, int x2, int y2)
         {
             float m, minv;
@@ -264,7 +325,7 @@ namespace GK_Projekt2
             return (field == 0 ? 0 : (field1 / field), field == 0 ? 0 : (field2 / field), field == 0 ? 0 : (field3 / field));
         }
 
-        private (double, double, double) InterpolateVectors((double, double, double) v1, (double, double, double) v2, (double, double, double) v3, (double, double, double) ratio)
+        private (double, double, double) Interpolate((double, double, double) v1, (double, double, double) v2, (double, double, double) v3, (double, double, double) ratio)
         {
             return (v1.Item1 * ratio.Item1 + v2.Item1 * ratio.Item2 + v3.Item1 * ratio.Item3,
                 v1.Item2 * ratio.Item1 + v2.Item2 * ratio.Item2 + v3.Item2 * ratio.Item3,
@@ -273,6 +334,7 @@ namespace GK_Projekt2
 
         private double CalculateCosUsingScalarProduct((double, double, double) versor1, (double, double, double) versor2)
         {
+            // X works properly, kd element of equation is not visible for upper half of the object
             return versor1.Item1 * versor2.Item1 + versor1.Item2 * versor2.Item2 + versor1.Item3 * versor2.Item3;
         }
 
@@ -293,6 +355,39 @@ namespace GK_Projekt2
             if (scaleParameter == 0)
                 return (0, 0, 0);
             return (x / scaleParameter, y / scaleParameter, z / scaleParameter);
+        }
+
+        private (double, double, double) CalculateNFromTexture((double, double, double) I, (double, double, double) N)
+        {
+            (double, double, double) ret;
+            double[,] matrix = new double[3, 3];
+            var P = (0, 0, 1);
+            var B = VectorProduct(N, P);
+            var T = VectorProduct(B, N);
+            matrix[0, 0] = T.Item1;
+            matrix[1, 0] = T.Item2;
+            matrix[2, 0] = T.Item3;
+            matrix[0, 1] = B.Item1;
+            matrix[1, 1] = B.Item2;
+            matrix[2, 1] = B.Item3;
+            matrix[0, 2] = N.Item1;
+            matrix[1, 2] = N.Item2;
+            matrix[2, 2] = N.Item3;
+            var Nt = ScaleTexture(I);
+            ret.Item1 = matrix[0, 0] * Nt.Item1 + matrix[0, 1] * Nt.Item2 + matrix[0, 2] * Nt.Item3;
+            ret.Item2 = matrix[1, 0] * Nt.Item1 + matrix[1, 1] * Nt.Item2 + matrix[1, 2] * Nt.Item3;
+            ret.Item3 = matrix[2, 0] * Nt.Item1 + matrix[2, 1] * Nt.Item2 + matrix[2, 2] * Nt.Item3;
+            return ret;
+        }
+
+        private (double, double, double) ScaleTexture((double, double, double) I)
+        {
+            return (I.Item1, I.Item2 , (I.Item3 + 1) / 2);
+        }
+
+        private (double, double, double) VectorProduct((double, double, double) A, (double, double, double) B)
+        {
+            return (A.Item2 * B.Item3 - A.Item3 * B.Item2, A.Item3 * B.Item1 - A.Item1 * B.Item3, A.Item1 * B.Item2 - A.Item2 * B.Item1);
         }
     }
 
