@@ -1,9 +1,4 @@
 ﻿using FastBitmapLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GK_Projekt2
 {
@@ -66,7 +61,7 @@ namespace GK_Projekt2
             {
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
+                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                     dialog.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png";
                     dialog.FilterIndex = 2;
                     dialog.RestoreDirectory = true;

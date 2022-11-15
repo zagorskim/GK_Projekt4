@@ -240,9 +240,9 @@ namespace GK_Projekt2
                     ScaledVertexOrder[face.VertexIndexList[0] - 1],
                     ScaledVertexOrder[face.VertexIndexList[1] - 1],
                     ScaledVertexOrder[face.VertexIndexList[2] - 1]));
-                System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte ? maxByte : r * maxByte),
-                    (int)(g * maxByte > maxByte ? maxByte : g * maxByte),
-                    (int)(b * maxByte > maxByte ? maxByte : b * maxByte));
+                System.Drawing.Color ret = System.Drawing.Color.FromArgb((int)(r * maxByte > maxByte || r < 0 ? r < 0 ? 0 : maxByte : r * maxByte),
+                    (int)(g * maxByte > maxByte  || g < 0 ? g < 0 ? 0 : maxByte : g * maxByte),
+                    (int)(b * maxByte > maxByte || b < 0 ? b < 0 ? 0 : maxByte : b * maxByte));
                 return ret;
             }
         }

@@ -69,7 +69,7 @@ namespace GK_Projekt2
                 var obj = new Obj();
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"/Resources/";
+                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                     dialog.Filter = "obj files (*.obj)|*.obj";
                     dialog.FilterIndex = 2;
                     dialog.RestoreDirectory = true;
