@@ -21,6 +21,7 @@ namespace GK_Projekt2
         public EdgeTab ActiveEdgeTuple;
         public Obj obj;
         public Bitmap _texture { get; set; }
+        public Bitmap _normalMap { get; set; }
         public (int, int, int)[]  ScaledVertexOrder;
         public (double, double, double) Io = (1, 1, 1);
         public (double, double, double) Il = (1, 1, 1);
@@ -34,7 +35,7 @@ namespace GK_Projekt2
         public Mutex mutex;
         #endregion
 
-        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture)
+        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap)
         {
             this._texture = texture;
             this.ScaledVertexOrder = ScaledVertexOrder;
@@ -48,6 +49,7 @@ namespace GK_Projekt2
             for (int i = 0; i < EdgeTable.Length; i++)
                 EdgeTable[i] = new EdgeTab(polyCount);
             ActiveEdgeTuple = new EdgeTab(polyCount);
+            _normalMap = normalMap;
         }
 
         public void FillPoly(FastBitmapLib.FastBitmap bitmap, (int, int)[] e, Face face)
@@ -156,12 +158,14 @@ namespace GK_Projekt2
             (double, double, double) I;
             var color = _texture.GetPixel(x, y);
             var It = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
+            color = _normalMap.GetPixel(x, y);
+            var Inm = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
             if (textureColor == true)
             {
                 I = It;
             }
             else
-                I = this.Io;
+                I = Io;
 
             var v1 = (obj.NVList[face.NVIndexList[0] - 1].X, obj.NVList[face.NVIndexList[0] - 1].Y, obj.NVList[face.NVIndexList[0] - 1].Z);
             var v2 = (obj.NVList[face.NVIndexList[1] - 1].X, obj.NVList[face.NVIndexList[1] - 1].Y, obj.NVList[face.NVIndexList[1] - 1].Z);
@@ -174,7 +178,7 @@ namespace GK_Projekt2
                     ScaledVertexOrder[face.VertexIndexList[1] - 1],
                     ScaledVertexOrder[face.VertexIndexList[2] - 1])));
                 if (normalVectorModified)
-                    N = CalculateNFromTexture(It, N);
+                    N = CalculateNFromTexture(Inm, N);
 
                 var L = NormalizeVectorFromVertices((x, y,
                     (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 +
@@ -200,9 +204,9 @@ namespace GK_Projekt2
                 var N3 = NormalizeVector(v3);
                 if (normalVectorModified)
                 {
-                    N1 = CalculateNFromTexture(It, N1);
-                    N2 = CalculateNFromTexture(It, N2);
-                    N3 = CalculateNFromTexture(It, N3);
+                    N1 = CalculateNFromTexture(Inm, N1);
+                    N2 = CalculateNFromTexture(Inm, N2);
+                    N3 = CalculateNFromTexture(Inm, N3);
                 }
 
                 var L = NormalizeVectorFromVertices((x, y,

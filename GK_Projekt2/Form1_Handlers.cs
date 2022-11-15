@@ -20,7 +20,7 @@ namespace GK_Projekt2
                 _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
                 _fastBitmap = new FastBitmap(_bitmap);
                 (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap);
                 _filler._texture = new Bitmap(_filler._texture, new Size(_bitmap.Width, _bitmap.Height));
                 SetFillerValues();
                 DrawObjectAnimation();
@@ -57,12 +57,13 @@ namespace GK_Projekt2
 
         private void btnLoadTexture_Click(object sender, EventArgs e)
         {
+            importing = true;
             if (!animationInProgress)
             {
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
                     dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                    dialog.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png";
+                    dialog.Filter = "Image Files|*.jpg;*.png";
                     dialog.FilterIndex = 2;
                     dialog.RestoreDirectory = true;
 
@@ -75,6 +76,7 @@ namespace GK_Projekt2
                     }
                 }
             }
+            importing = false;
         }
 
         private void SetFillerValues()
@@ -105,7 +107,7 @@ namespace GK_Projekt2
 
         private void tlpMain_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!animationInProgress)
+            if (!animationInProgress && !importing)
                 DrawObjectAnimation();
         }
 
@@ -182,6 +184,30 @@ namespace GK_Projekt2
         {
             if (!animationInProgress)
                 await Task.Run(() => Animation());
+        }
+
+        private void btnLoadNormalMap_Click(object sender, EventArgs e)
+        {
+            importing = true;
+            if (!animationInProgress)
+            {
+                using (OpenFileDialog dialog = new OpenFileDialog())
+                {
+                    dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                    dialog.Filter = "Image Files|*.jpg;*.png";
+                    dialog.FilterIndex = 2;
+                    dialog.RestoreDirectory = true;
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var filePath = dialog.FileName;
+                        _normalMap = new Bitmap(Image.FromFile(filePath));
+                        _filler._normalMap = new Bitmap(this._normalMap, new Size(_bitmap.Width, _bitmap.Height));
+                        DrawObject();
+                    }
+                }
+            }
+            importing = false;
         }
     }
 }

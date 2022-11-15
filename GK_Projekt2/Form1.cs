@@ -8,6 +8,7 @@ using FastBitmapLib;
 using System.CodeDom.Compiler;
 using System.IO;
 
+// èrÛd≥o úwiat≥a
 namespace GK_Projekt2
 {
 // Parsing *.obj files (ObjParser) taken from some open source implementation (https://github.com/stefangordon/ObjParser.git)
@@ -24,14 +25,15 @@ namespace GK_Projekt2
         public System.Threading.Mutex animationMutex;
         public Bitmap _bitmap;
         public Bitmap _texture;
+        public Bitmap _normalMap;
         public FastBitmap _fastBitmap;
         // need to make a list of fillers to be able to fill different polygons of different vertex count
         public Filler _filler;
         public bool animationInProgress = false;
+        public bool importing;
         private static int lastTick;
         private static int lastFrameRate;
         private static int frameRate;
-
         #endregion
 
         public Form1()
@@ -39,15 +41,17 @@ namespace GK_Projekt2
             InitializeComponent();
             _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
             _fastBitmap = new FastBitmap(_bitmap);
-            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
+            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
             _texture = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
+            temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
+            _normalMap = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
             _fastBitmap = new FastBitmap(_bitmap);
             _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
             ScaledEdgeList = new List<((int, int, int), (int, int, int))>();
             ScaledVertexList = new List<(int, int, int, Face)>();
             ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
             (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap);
             sbLightZ.Value= sbLightZ.Maximum / 2;
             DrawObject();
             animationMutex = new System.Threading.Mutex();
@@ -62,6 +66,7 @@ namespace GK_Projekt2
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            importing = true;
             if (!animationInProgress)
             {
                 _bitmap = new Bitmap(pbCanvas.Image.Width + 2, pbCanvas.Image.Height + 2);
@@ -81,13 +86,15 @@ namespace GK_Projekt2
                         _loadedObject = obj;
                         ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
                         (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture);
+                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap);
                         SetFillerValues();
+                        _filler._texture = new Bitmap(this._texture, new Size(_bitmap.Width, _bitmap.Height));
                         if (!animationInProgress)
                             DrawObject();
                     }
                 }
             }
+            importing = false;
         }
 
         // Asynchronous drawing provides better UI behaviour, but sometimes doesn't complete calculations, disabling async drawing will fix it
@@ -106,12 +113,15 @@ namespace GK_Projekt2
 
         public void DrawObjectAnimation()
         {
-            _fastBitmap.Lock();
-            FillMesh(_fastBitmap);
-            _fastBitmap.Unlock();
-            if (cbMesh.Checked)
+            if (!_fastBitmap.Locked)
+            {
+                _fastBitmap.Lock();
+                FillMesh(_fastBitmap);
+                _fastBitmap.Unlock();
+                if (cbMesh.Checked)
                     DrawLines(_bitmap, System.Drawing.Color.Black, 1);
                 pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+            }
         }
 
         public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size)
@@ -146,7 +156,6 @@ namespace GK_Projekt2
         {
             return ((int)((x * 0.99 + 1) * _bitmap.Height / 2), (int)((y * 0.99 + 1) * _bitmap.Height / 2), (int)((z * 0.99) * _bitmap.Height / 2));
         }
-
 
         public (List<((int, int, int), (int, int, int))>, List<(int, int, int, Face)>, (int, int, int)[]) ScaleVertices(List<Face> faces, int width, int height)
         {

@@ -35,16 +35,7 @@
     <None Update="Resources\coneAVG.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\cylinder.obj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\cylinder2OX.obj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\cylinder2OXAVG.obj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\cylinderAVG.obj">
+    <None Update="Resources\Fold and Tatter %28Effect%29 - Normal Map.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\hemisphere.obj">
@@ -59,7 +50,13 @@
     <None Update="Resources\pexels-anni-roenkae-2832432.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\quad_sphere.obj">
+    <None Update="Resources\pexels-anni-roenkae-5278595.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\pexels-anni-roenkae-7120330.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\pobrane.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Water on camera lense effect.png">

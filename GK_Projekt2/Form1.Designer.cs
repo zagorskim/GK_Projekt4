@@ -78,6 +78,7 @@ namespace GK_Projekt2
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnLoadNormalMap = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.flpMenu.SuspendLayout();
             this.flpCheckboxes.SuspendLayout();
@@ -103,8 +104,8 @@ namespace GK_Projekt2
             // tlpMain
             // 
             this.tlpMain.ColumnCount = 2;
-            this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tlpMain.Controls.Add(this.flpMenu, 0, 0);
             this.tlpMain.Controls.Add(this.tlpSliders, 1, 1);
             this.tlpMain.Controls.Add(this.pPictureBoxPanel, 0, 1);
@@ -113,10 +114,9 @@ namespace GK_Projekt2
             this.tlpMain.Name = "tlpMain";
             this.tlpMain.RowCount = 3;
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 88F));
-            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpMain.Size = new System.Drawing.Size(800, 888);
+            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tlpMain.Size = new System.Drawing.Size(847, 916);
             this.tlpMain.TabIndex = 1;
             this.tlpMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
@@ -127,6 +127,7 @@ namespace GK_Projekt2
             this.tlpMain.SetColumnSpan(this.flpMenu, 2);
             this.flpMenu.Controls.Add(this.btnImport);
             this.flpMenu.Controls.Add(this.btnLoadTexture);
+            this.flpMenu.Controls.Add(this.btnLoadNormalMap);
             this.flpMenu.Controls.Add(this.btnAnimation);
             this.flpMenu.Controls.Add(this.btnStopAnimation);
             this.flpMenu.Controls.Add(this.flpCheckboxes);
@@ -136,7 +137,7 @@ namespace GK_Projekt2
             this.flpMenu.Location = new System.Drawing.Point(0, 0);
             this.flpMenu.Margin = new System.Windows.Forms.Padding(0);
             this.flpMenu.Name = "flpMenu";
-            this.flpMenu.Size = new System.Drawing.Size(800, 88);
+            this.flpMenu.Size = new System.Drawing.Size(847, 88);
             this.flpMenu.TabIndex = 3;
             // 
             // btnLoadTexture
@@ -152,7 +153,7 @@ namespace GK_Projekt2
             // 
             // btnAnimation
             // 
-            this.btnAnimation.Location = new System.Drawing.Point(132, 5);
+            this.btnAnimation.Location = new System.Drawing.Point(205, 5);
             this.btnAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnAnimation.Name = "btnAnimation";
             this.btnAnimation.Size = new System.Drawing.Size(71, 77);
@@ -163,7 +164,7 @@ namespace GK_Projekt2
             // 
             // btnStopAnimation
             // 
-            this.btnStopAnimation.Location = new System.Drawing.Point(213, 5);
+            this.btnStopAnimation.Location = new System.Drawing.Point(286, 5);
             this.btnStopAnimation.Margin = new System.Windows.Forms.Padding(5);
             this.btnStopAnimation.Name = "btnStopAnimation";
             this.btnStopAnimation.Size = new System.Drawing.Size(71, 77);
@@ -180,7 +181,7 @@ namespace GK_Projekt2
             this.flpCheckboxes.Controls.Add(this.cbMesh);
             this.flpCheckboxes.Controls.Add(this.cbModifiedNormalVector);
             this.flpCheckboxes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpCheckboxes.Location = new System.Drawing.Point(292, 7);
+            this.flpCheckboxes.Location = new System.Drawing.Point(365, 7);
             this.flpCheckboxes.Name = "flpCheckboxes";
             this.flpCheckboxes.Size = new System.Drawing.Size(162, 73);
             this.flpCheckboxes.TabIndex = 7;
@@ -197,8 +198,6 @@ namespace GK_Projekt2
             // cbMesh
             // 
             this.cbMesh.AutoSize = true;
-            this.cbMesh.Checked = true;
-            this.cbMesh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbMesh.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbMesh.Location = new System.Drawing.Point(3, 18);
             this.cbMesh.Name = "cbMesh";
@@ -230,7 +229,7 @@ namespace GK_Projekt2
             this.flpRadioButtons.Controls.Add(this.rbFixedObjectColor);
             this.flpRadioButtons.Controls.Add(this.rbTextureObjectColor);
             this.flpRadioButtons.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpRadioButtons.Location = new System.Drawing.Point(460, 7);
+            this.flpRadioButtons.Location = new System.Drawing.Point(533, 7);
             this.flpRadioButtons.Name = "flpRadioButtons";
             this.flpRadioButtons.Size = new System.Drawing.Size(168, 73);
             this.flpRadioButtons.TabIndex = 4;
@@ -275,7 +274,7 @@ namespace GK_Projekt2
             this.flpInterpolationMethod.Controls.Add(this.rbVectors);
             this.flpInterpolationMethod.Controls.Add(this.radioButton2);
             this.flpInterpolationMethod.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpInterpolationMethod.Location = new System.Drawing.Point(634, 7);
+            this.flpInterpolationMethod.Location = new System.Drawing.Point(707, 7);
             this.flpInterpolationMethod.Name = "flpInterpolationMethod";
             this.flpInterpolationMethod.Size = new System.Drawing.Size(129, 73);
             this.flpInterpolationMethod.TabIndex = 8;
@@ -341,7 +340,7 @@ namespace GK_Projekt2
             this.tlpSliders.Controls.Add(this.lblKd, 0, 0);
             this.tlpSliders.Controls.Add(this.sbKd, 0, 1);
             this.tlpSliders.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpSliders.Location = new System.Drawing.Point(563, 91);
+            this.tlpSliders.Location = new System.Drawing.Point(511, 91);
             this.tlpSliders.Name = "tlpSliders";
             this.tlpSliders.RowCount = 25;
             this.tlpMain.SetRowSpan(this.tlpSliders, 2);
@@ -372,7 +371,7 @@ namespace GK_Projekt2
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpSliders.Size = new System.Drawing.Size(234, 794);
+            this.tlpSliders.Size = new System.Drawing.Size(333, 822);
             this.tlpSliders.TabIndex = 4;
             this.tlpSliders.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
@@ -381,7 +380,7 @@ namespace GK_Projekt2
             this.sbObjectB.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbObjectB.Location = new System.Drawing.Point(0, 690);
             this.sbObjectB.Name = "sbObjectB";
-            this.sbObjectB.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectB.Size = new System.Drawing.Size(333, 30);
             this.sbObjectB.TabIndex = 27;
             this.sbObjectB.Value = 100;
             this.sbObjectB.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectB_Scroll);
@@ -392,7 +391,7 @@ namespace GK_Projekt2
             this.lblObjectB.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblObjectB.Location = new System.Drawing.Point(3, 675);
             this.lblObjectB.Name = "lblObjectB";
-            this.lblObjectB.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectB.Size = new System.Drawing.Size(327, 15);
             this.lblObjectB.TabIndex = 26;
             this.lblObjectB.Text = "Light B Value";
             // 
@@ -401,7 +400,7 @@ namespace GK_Projekt2
             this.sbObjectG.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbObjectG.Location = new System.Drawing.Point(0, 630);
             this.sbObjectG.Name = "sbObjectG";
-            this.sbObjectG.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectG.Size = new System.Drawing.Size(333, 30);
             this.sbObjectG.TabIndex = 25;
             this.sbObjectG.Value = 100;
             this.sbObjectG.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectG_Scroll);
@@ -412,7 +411,7 @@ namespace GK_Projekt2
             this.lblObjectG.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblObjectG.Location = new System.Drawing.Point(3, 615);
             this.lblObjectG.Name = "lblObjectG";
-            this.lblObjectG.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectG.Size = new System.Drawing.Size(327, 15);
             this.lblObjectG.TabIndex = 24;
             this.lblObjectG.Text = "Light G Value";
             // 
@@ -421,7 +420,7 @@ namespace GK_Projekt2
             this.sbObjectR.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbObjectR.Location = new System.Drawing.Point(0, 570);
             this.sbObjectR.Name = "sbObjectR";
-            this.sbObjectR.Size = new System.Drawing.Size(234, 30);
+            this.sbObjectR.Size = new System.Drawing.Size(333, 30);
             this.sbObjectR.TabIndex = 23;
             this.sbObjectR.Value = 100;
             this.sbObjectR.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbObjectR_Scroll);
@@ -432,7 +431,7 @@ namespace GK_Projekt2
             this.lblObjectR.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblObjectR.Location = new System.Drawing.Point(3, 555);
             this.lblObjectR.Name = "lblObjectR";
-            this.lblObjectR.Size = new System.Drawing.Size(228, 15);
+            this.lblObjectR.Size = new System.Drawing.Size(327, 15);
             this.lblObjectR.TabIndex = 22;
             this.lblObjectR.Text = "Light R Value";
             // 
@@ -441,7 +440,7 @@ namespace GK_Projekt2
             this.sbLightB.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightB.Location = new System.Drawing.Point(0, 510);
             this.sbLightB.Name = "sbLightB";
-            this.sbLightB.Size = new System.Drawing.Size(234, 30);
+            this.sbLightB.Size = new System.Drawing.Size(333, 30);
             this.sbLightB.TabIndex = 21;
             this.sbLightB.Value = 100;
             this.sbLightB.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightB_Scroll);
@@ -452,7 +451,7 @@ namespace GK_Projekt2
             this.lblLightB.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightB.Location = new System.Drawing.Point(3, 495);
             this.lblLightB.Name = "lblLightB";
-            this.lblLightB.Size = new System.Drawing.Size(228, 15);
+            this.lblLightB.Size = new System.Drawing.Size(327, 15);
             this.lblLightB.TabIndex = 20;
             this.lblLightB.Text = "Light B Value";
             // 
@@ -461,7 +460,7 @@ namespace GK_Projekt2
             this.sbLightG.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightG.Location = new System.Drawing.Point(0, 450);
             this.sbLightG.Name = "sbLightG";
-            this.sbLightG.Size = new System.Drawing.Size(234, 30);
+            this.sbLightG.Size = new System.Drawing.Size(333, 30);
             this.sbLightG.TabIndex = 19;
             this.sbLightG.Value = 100;
             this.sbLightG.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightG_Scroll);
@@ -472,7 +471,7 @@ namespace GK_Projekt2
             this.lblLightG.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightG.Location = new System.Drawing.Point(3, 435);
             this.lblLightG.Name = "lblLightG";
-            this.lblLightG.Size = new System.Drawing.Size(228, 15);
+            this.lblLightG.Size = new System.Drawing.Size(327, 15);
             this.lblLightG.TabIndex = 18;
             this.lblLightG.Text = "Light G Value";
             // 
@@ -481,7 +480,7 @@ namespace GK_Projekt2
             this.sbLightR.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightR.Location = new System.Drawing.Point(0, 390);
             this.sbLightR.Name = "sbLightR";
-            this.sbLightR.Size = new System.Drawing.Size(234, 30);
+            this.sbLightR.Size = new System.Drawing.Size(333, 30);
             this.sbLightR.TabIndex = 17;
             this.sbLightR.Value = 100;
             this.sbLightR.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightR_Scroll);
@@ -492,7 +491,7 @@ namespace GK_Projekt2
             this.lblLightR.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightR.Location = new System.Drawing.Point(3, 375);
             this.lblLightR.Name = "lblLightR";
-            this.lblLightR.Size = new System.Drawing.Size(228, 15);
+            this.lblLightR.Size = new System.Drawing.Size(327, 15);
             this.lblLightR.TabIndex = 16;
             this.lblLightR.Text = "Light R Value";
             // 
@@ -502,7 +501,7 @@ namespace GK_Projekt2
             this.sbm.Location = new System.Drawing.Point(0, 150);
             this.sbm.Minimum = 1;
             this.sbm.Name = "sbm";
-            this.sbm.Size = new System.Drawing.Size(234, 30);
+            this.sbm.Size = new System.Drawing.Size(333, 30);
             this.sbm.TabIndex = 15;
             this.sbm.Value = 1;
             this.sbm.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbm_Scroll);
@@ -513,7 +512,7 @@ namespace GK_Projekt2
             this.lblm.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblm.Location = new System.Drawing.Point(3, 135);
             this.lblm.Name = "lblm";
-            this.lblm.Size = new System.Drawing.Size(228, 15);
+            this.lblm.Size = new System.Drawing.Size(327, 15);
             this.lblm.TabIndex = 14;
             this.lblm.Text = "m Value";
             // 
@@ -522,7 +521,7 @@ namespace GK_Projekt2
             this.sbLightZ.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightZ.Location = new System.Drawing.Point(0, 330);
             this.sbLightZ.Name = "sbLightZ";
-            this.sbLightZ.Size = new System.Drawing.Size(234, 30);
+            this.sbLightZ.Size = new System.Drawing.Size(333, 30);
             this.sbLightZ.TabIndex = 13;
             this.sbLightZ.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightZ_Scroll);
             // 
@@ -532,7 +531,7 @@ namespace GK_Projekt2
             this.lblLightZ.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightZ.Location = new System.Drawing.Point(3, 315);
             this.lblLightZ.Name = "lblLightZ";
-            this.lblLightZ.Size = new System.Drawing.Size(228, 15);
+            this.lblLightZ.Size = new System.Drawing.Size(327, 15);
             this.lblLightZ.TabIndex = 12;
             this.lblLightZ.Text = "Light Z";
             // 
@@ -541,7 +540,7 @@ namespace GK_Projekt2
             this.sbLightY.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightY.Location = new System.Drawing.Point(0, 270);
             this.sbLightY.Name = "sbLightY";
-            this.sbLightY.Size = new System.Drawing.Size(234, 30);
+            this.sbLightY.Size = new System.Drawing.Size(333, 30);
             this.sbLightY.TabIndex = 11;
             this.sbLightY.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightY_Scroll);
             // 
@@ -551,7 +550,7 @@ namespace GK_Projekt2
             this.lblLightY.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightY.Location = new System.Drawing.Point(3, 255);
             this.lblLightY.Name = "lblLightY";
-            this.lblLightY.Size = new System.Drawing.Size(228, 15);
+            this.lblLightY.Size = new System.Drawing.Size(327, 15);
             this.lblLightY.TabIndex = 10;
             this.lblLightY.Text = "Light Y";
             // 
@@ -560,7 +559,7 @@ namespace GK_Projekt2
             this.sbLightX.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbLightX.Location = new System.Drawing.Point(0, 210);
             this.sbLightX.Name = "sbLightX";
-            this.sbLightX.Size = new System.Drawing.Size(234, 30);
+            this.sbLightX.Size = new System.Drawing.Size(333, 30);
             this.sbLightX.TabIndex = 9;
             this.sbLightX.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbLightX_Scroll);
             // 
@@ -570,7 +569,7 @@ namespace GK_Projekt2
             this.lblLightX.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblLightX.Location = new System.Drawing.Point(3, 195);
             this.lblLightX.Name = "lblLightX";
-            this.lblLightX.Size = new System.Drawing.Size(228, 15);
+            this.lblLightX.Size = new System.Drawing.Size(327, 15);
             this.lblLightX.TabIndex = 8;
             this.lblLightX.Text = "Light X";
             // 
@@ -579,7 +578,7 @@ namespace GK_Projekt2
             this.sbKs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbKs.Location = new System.Drawing.Point(0, 90);
             this.sbKs.Name = "sbKs";
-            this.sbKs.Size = new System.Drawing.Size(234, 30);
+            this.sbKs.Size = new System.Drawing.Size(333, 30);
             this.sbKs.TabIndex = 7;
             this.sbKs.Value = 100;
             this.sbKs.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbKs_Scroll);
@@ -590,7 +589,7 @@ namespace GK_Projekt2
             this.lblKs.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblKs.Location = new System.Drawing.Point(3, 75);
             this.lblKs.Name = "lblKs";
-            this.lblKs.Size = new System.Drawing.Size(228, 15);
+            this.lblKs.Size = new System.Drawing.Size(327, 15);
             this.lblKs.TabIndex = 5;
             this.lblKs.Text = "Ks value";
             // 
@@ -600,7 +599,7 @@ namespace GK_Projekt2
             this.lblKd.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblKd.Location = new System.Drawing.Point(3, 15);
             this.lblKd.Name = "lblKd";
-            this.lblKd.Size = new System.Drawing.Size(228, 15);
+            this.lblKd.Size = new System.Drawing.Size(327, 15);
             this.lblKd.TabIndex = 4;
             this.lblKd.Text = "Kd value";
             // 
@@ -609,7 +608,7 @@ namespace GK_Projekt2
             this.sbKd.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sbKd.Location = new System.Drawing.Point(0, 30);
             this.sbKd.Name = "sbKd";
-            this.sbKd.Size = new System.Drawing.Size(234, 30);
+            this.sbKd.Size = new System.Drawing.Size(333, 30);
             this.sbKd.TabIndex = 6;
             this.sbKd.Value = 100;
             this.sbKd.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
@@ -621,7 +620,7 @@ namespace GK_Projekt2
             this.pPictureBoxPanel.Location = new System.Drawing.Point(10, 98);
             this.pPictureBoxPanel.Margin = new System.Windows.Forms.Padding(10);
             this.pPictureBoxPanel.Name = "pPictureBoxPanel";
-            this.pPictureBoxPanel.Size = new System.Drawing.Size(540, 540);
+            this.pPictureBoxPanel.Size = new System.Drawing.Size(488, 476);
             this.pPictureBoxPanel.TabIndex = 5;
             // 
             // pbCanvas
@@ -629,7 +628,7 @@ namespace GK_Projekt2
             this.pbCanvas.Location = new System.Drawing.Point(0, 0);
             this.pbCanvas.Margin = new System.Windows.Forms.Padding(0);
             this.pbCanvas.Name = "pbCanvas";
-            this.pbCanvas.Size = new System.Drawing.Size(540, 540);
+            this.pbCanvas.Size = new System.Drawing.Size(488, 476);
             this.pbCanvas.TabIndex = 2;
             this.pbCanvas.TabStop = false;
             this.pbCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
@@ -672,11 +671,22 @@ namespace GK_Projekt2
             this.label2.TabIndex = 10;
             this.label2.Text = "Ks value";
             // 
+            // btnLoadNormalMap
+            // 
+            this.btnLoadNormalMap.Location = new System.Drawing.Point(132, 5);
+            this.btnLoadNormalMap.Margin = new System.Windows.Forms.Padding(5);
+            this.btnLoadNormalMap.Name = "btnLoadNormalMap";
+            this.btnLoadNormalMap.Size = new System.Drawing.Size(63, 77);
+            this.btnLoadNormalMap.TabIndex = 9;
+            this.btnLoadNormalMap.Text = "Load Normal Map";
+            this.btnLoadNormalMap.UseVisualStyleBackColor = true;
+            this.btnLoadNormalMap.Click += new System.EventHandler(this.btnLoadNormalMap_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 888);
+            this.ClientSize = new System.Drawing.Size(847, 916);
             this.Controls.Add(this.tlpMain);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -749,6 +759,7 @@ namespace GK_Projekt2
         private Label lblInterpolation;
         private RadioButton rbVectors;
         private RadioButton radioButton2;
+        private Button btnLoadNormalMap;
     }
 
 }
