@@ -127,21 +127,21 @@ namespace GK_Projekt2
 
         private void sbLightX_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item1 = (int)(_bitmap.Height * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item1 = (int)(_bitmap.Height * 3 * (double)((HScrollBar)sender).Value / 100 - pbCanvas.Height);
             if (!animationInProgress)
                 DrawObject();
         }
 
         private void sbLightY_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item2 = (int)(_bitmap.Width * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item2 = (int)(_bitmap.Width * 3 * (double)((HScrollBar)sender).Value / 100 - pbCanvas.Height);
             if (!animationInProgress)
                 DrawObject();
         }
 
         private void sbLightZ_Scroll(object sender, ScrollEventArgs e)
         {
-            _filler.light.Item3 = (int)(_bitmap.Height / 2 + pbCanvas.Height * (double)((HScrollBar)sender).Value / 100);
+            _filler.light.Item3 = (int)(_bitmap.Height / 2 + pbCanvas.Height * 2 * (double)((HScrollBar)sender).Value / 100);
             if (!animationInProgress)
                 DrawObject();
         }

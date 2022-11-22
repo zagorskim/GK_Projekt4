@@ -41,7 +41,9 @@ namespace GK_Projekt2
             this.ScaledVertexOrder = ScaledVertexOrder;
             this.polyCount = polyCount;
             this.Height = Height;
-            light.Item3 = Height;
+            light.Item1 = - Height;
+            light.Item2 = - Height;
+            light.Item3 = (int)(Height * 1.5);
             this.Width = Width;
             this.obj = obj;
             EdgeTable = new EdgeTab[Height];
@@ -157,9 +159,9 @@ namespace GK_Projekt2
         {
             (double, double, double) I;
             var color = _texture.GetPixel(x, y);
-            var It = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
+            var It = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
             color = _normalMap.GetPixel(x, y);
-            var Inm = ((double)((decimal)color.R / (decimal)maxByte), (double)((decimal)color.G / (decimal)maxByte), (double)((decimal)color.B / (decimal)maxByte));
+            var Inm = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
             if (textureColor == true)
             {
                 I = It;

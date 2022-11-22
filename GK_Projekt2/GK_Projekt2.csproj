@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Files\jupiter.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\cone.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -34,6 +34,7 @@ namespace GK_Projekt2
             this.tlpMain = new System.Windows.Forms.TableLayoutPanel();
             this.flpMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.btnLoadTexture = new System.Windows.Forms.Button();
+            this.btnLoadNormalMap = new System.Windows.Forms.Button();
             this.btnAnimation = new System.Windows.Forms.Button();
             this.btnStopAnimation = new System.Windows.Forms.Button();
             this.flpCheckboxes = new System.Windows.Forms.FlowLayoutPanel();
@@ -78,7 +79,6 @@ namespace GK_Projekt2
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnLoadNormalMap = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.flpMenu.SuspendLayout();
             this.flpCheckboxes.SuspendLayout();
@@ -150,6 +150,17 @@ namespace GK_Projekt2
             this.btnLoadTexture.Text = "Load Texture";
             this.btnLoadTexture.UseVisualStyleBackColor = true;
             this.btnLoadTexture.Click += new System.EventHandler(this.btnLoadTexture_Click);
+            // 
+            // btnLoadNormalMap
+            // 
+            this.btnLoadNormalMap.Location = new System.Drawing.Point(132, 5);
+            this.btnLoadNormalMap.Margin = new System.Windows.Forms.Padding(5);
+            this.btnLoadNormalMap.Name = "btnLoadNormalMap";
+            this.btnLoadNormalMap.Size = new System.Drawing.Size(63, 77);
+            this.btnLoadNormalMap.TabIndex = 9;
+            this.btnLoadNormalMap.Text = "Load Normal Map";
+            this.btnLoadNormalMap.UseVisualStyleBackColor = true;
+            this.btnLoadNormalMap.Click += new System.EventHandler(this.btnLoadNormalMap_Click);
             // 
             // btnAnimation
             // 
@@ -393,7 +404,7 @@ namespace GK_Projekt2
             this.lblObjectB.Name = "lblObjectB";
             this.lblObjectB.Size = new System.Drawing.Size(327, 15);
             this.lblObjectB.TabIndex = 26;
-            this.lblObjectB.Text = "Light B Value";
+            this.lblObjectB.Text = "Object B Value";
             // 
             // sbObjectG
             // 
@@ -413,7 +424,7 @@ namespace GK_Projekt2
             this.lblObjectG.Name = "lblObjectG";
             this.lblObjectG.Size = new System.Drawing.Size(327, 15);
             this.lblObjectG.TabIndex = 24;
-            this.lblObjectG.Text = "Light G Value";
+            this.lblObjectG.Text = "Object G Value";
             // 
             // sbObjectR
             // 
@@ -433,7 +444,7 @@ namespace GK_Projekt2
             this.lblObjectR.Name = "lblObjectR";
             this.lblObjectR.Size = new System.Drawing.Size(327, 15);
             this.lblObjectR.TabIndex = 22;
-            this.lblObjectR.Text = "Light R Value";
+            this.lblObjectR.Text = "Object R Value";
             // 
             // sbLightB
             // 
@@ -670,17 +681,6 @@ namespace GK_Projekt2
             this.label2.Size = new System.Drawing.Size(194, 15);
             this.label2.TabIndex = 10;
             this.label2.Text = "Ks value";
-            // 
-            // btnLoadNormalMap
-            // 
-            this.btnLoadNormalMap.Location = new System.Drawing.Point(132, 5);
-            this.btnLoadNormalMap.Margin = new System.Windows.Forms.Padding(5);
-            this.btnLoadNormalMap.Name = "btnLoadNormalMap";
-            this.btnLoadNormalMap.Size = new System.Drawing.Size(63, 77);
-            this.btnLoadNormalMap.TabIndex = 9;
-            this.btnLoadNormalMap.Text = "Load Normal Map";
-            this.btnLoadNormalMap.UseVisualStyleBackColor = true;
-            this.btnLoadNormalMap.Click += new System.EventHandler(this.btnLoadNormalMap_Click);
             // 
             // Form1
             // 
