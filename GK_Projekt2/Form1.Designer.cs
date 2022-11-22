@@ -76,6 +76,10 @@ namespace GK_Projekt2
             this.sbKd = new System.Windows.Forms.HScrollBar();
             this.pPictureBoxPanel = new System.Windows.Forms.Panel();
             this.pbCanvas = new System.Windows.Forms.PictureBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.rbHeightMapTrue = new System.Windows.Forms.RadioButton();
+            this.rbrbHeightMapFalse = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
@@ -87,6 +91,7 @@ namespace GK_Projekt2
             this.tlpSliders.SuspendLayout();
             this.pPictureBoxPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
+            this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,6 +114,7 @@ namespace GK_Projekt2
             this.tlpMain.Controls.Add(this.flpMenu, 0, 0);
             this.tlpMain.Controls.Add(this.tlpSliders, 1, 1);
             this.tlpMain.Controls.Add(this.pPictureBoxPanel, 0, 1);
+            this.tlpMain.Controls.Add(this.flowLayoutPanel1, 0, 2);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
             this.tlpMain.Name = "tlpMain";
@@ -644,6 +650,51 @@ namespace GK_Projekt2
             this.pbCanvas.TabStop = false;
             this.pbCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanel1.Controls.Add(this.label1);
+            this.flowLayoutPanel1.Controls.Add(this.rbHeightMapTrue);
+            this.flowLayoutPanel1.Controls.Add(this.rbrbHeightMapFalse);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 587);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(502, 73);
+            this.flowLayoutPanel1.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(195, 15);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Height Map Instead of Normal Map";
+            // 
+            // rbHeightMapTrue
+            // 
+            this.rbHeightMapTrue.AutoSize = true;
+            this.rbHeightMapTrue.Location = new System.Drawing.Point(3, 18);
+            this.rbHeightMapTrue.Name = "rbHeightMapTrue";
+            this.rbHeightMapTrue.Size = new System.Drawing.Size(67, 19);
+            this.rbHeightMapTrue.TabIndex = 2;
+            this.rbHeightMapTrue.Text = "Enabled";
+            this.rbHeightMapTrue.UseVisualStyleBackColor = true;
+            this.rbHeightMapTrue.CheckedChanged += new System.EventHandler(this.rbHeightMapTrue_CheckedChanged);
+            // 
+            // rbrbHeightMapFalse
+            // 
+            this.rbrbHeightMapFalse.AutoSize = true;
+            this.rbrbHeightMapFalse.Checked = true;
+            this.rbrbHeightMapFalse.Location = new System.Drawing.Point(3, 43);
+            this.rbrbHeightMapFalse.Name = "rbrbHeightMapFalse";
+            this.rbrbHeightMapFalse.Size = new System.Drawing.Size(70, 19);
+            this.rbrbHeightMapFalse.TabIndex = 3;
+            this.rbrbHeightMapFalse.TabStop = true;
+            this.rbrbHeightMapFalse.Text = "Disabled";
+            this.rbrbHeightMapFalse.UseVisualStyleBackColor = true;
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -704,6 +755,8 @@ namespace GK_Projekt2
             this.tlpSliders.PerformLayout();
             this.pPictureBoxPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -760,6 +813,10 @@ namespace GK_Projekt2
         private RadioButton rbVectors;
         private RadioButton radioButton2;
         private Button btnLoadNormalMap;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Label label1;
+        private RadioButton rbHeightMapTrue;
+        private RadioButton rbrbHeightMapFalse;
     }
 
 }

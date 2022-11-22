@@ -20,7 +20,7 @@ namespace GK_Projekt2
                 _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
                 _fastBitmap = new FastBitmap(_bitmap);
                 (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap);
+                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled);
                 _filler._texture = new Bitmap(_filler._texture, new Size(_bitmap.Width, _bitmap.Height));
                 SetFillerValues();
                 DrawObjectAnimation();
@@ -208,6 +208,12 @@ namespace GK_Projekt2
                 }
             }
             importing = false;
+        }
+
+        private void rbHeightMapTrue_CheckedChanged(object sender, EventArgs e)
+        {
+            _filler.heightMap = ((RadioButton)sender).Checked;
+            this.isHeightMapEnabled = ((RadioButton)sender).Checked;
         }
     }
 }

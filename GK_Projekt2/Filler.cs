@@ -1,4 +1,5 @@
-﻿using ObjParser;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using ObjParser;
 using ObjParser.Types;
 using System;
 using System.Collections.Generic;
@@ -33,10 +34,12 @@ namespace GK_Projekt2
         public bool vectorInterpolation = true;
         public (int, int, int) light = (0, 0, 0);
         public Mutex mutex;
+        public bool heightMap = false;
         #endregion
 
-        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap)
+        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap, bool heightMapToggle)
         {
+            heightMap = heightMapToggle;
             this._texture = texture;
             this.ScaledVertexOrder = ScaledVertexOrder;
             this.polyCount = polyCount;
@@ -162,6 +165,10 @@ namespace GK_Projekt2
             var It = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
             color = _normalMap.GetPixel(x, y);
             var Inm = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
+            color = _normalMap.GetPixel(x <= this._normalMap.Height ? x + 1 : x, y);
+            var nextXInm = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
+            color = _normalMap.GetPixel(x, y <= this._normalMap.Height ? y + 1 : y);
+            var nextYInm = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
             if (textureColor == true)
             {
                 I = It;
@@ -180,7 +187,7 @@ namespace GK_Projekt2
                     ScaledVertexOrder[face.VertexIndexList[1] - 1],
                     ScaledVertexOrder[face.VertexIndexList[2] - 1])));
                 if (normalVectorModified)
-                    N = CalculateNFromTexture(Inm, N);
+                    N = CalculateNFromTexture(Inm, N, nextXInm, nextYInm);
 
                 var L = NormalizeVectorFromVertices((x, y,
                     (ScaledVertexOrder[face.VertexIndexList[0] - 1].Item3 +
@@ -206,9 +213,9 @@ namespace GK_Projekt2
                 var N3 = NormalizeVector(v3);
                 if (normalVectorModified)
                 {
-                    N1 = CalculateNFromTexture(Inm, N1);
-                    N2 = CalculateNFromTexture(Inm, N2);
-                    N3 = CalculateNFromTexture(Inm, N3);
+                    N1 = CalculateNFromTexture(Inm, N1, nextYInm, nextYInm);
+                    N2 = CalculateNFromTexture(Inm, N2, nextYInm, nextYInm);
+                    N3 = CalculateNFromTexture(Inm, N3, nextYInm, nextYInm);
                 }
 
                 var L = NormalizeVectorFromVertices((x, y,
@@ -375,26 +382,38 @@ namespace GK_Projekt2
             return (x / scaleParameter, y / scaleParameter, z / scaleParameter);
         }
 
-        private (double, double, double) CalculateNFromTexture((double, double, double) I, (double, double, double) N)
+        private (double, double, double) CalculateNFromTexture((double, double, double) I, (double, double, double) N, (double, double, double) nextIX, (double, double, double) nextIY)
         {
             (double, double, double) ret;
-            double[,] matrix = new double[3, 3];
             var P = (0, 0, 1);
             var B = VectorProduct(N, P);
             var T = VectorProduct(B, N);
-            matrix[0, 0] = T.Item1;
-            matrix[1, 0] = T.Item2;
-            matrix[2, 0] = T.Item3;
-            matrix[0, 1] = B.Item1;
-            matrix[1, 1] = B.Item2;
-            matrix[2, 1] = B.Item3;
-            matrix[0, 2] = N.Item1;
-            matrix[1, 2] = N.Item2;
-            matrix[2, 2] = N.Item3;
-            var Nt = ScaleTexture(I);
-            ret.Item1 = matrix[0, 0] * Nt.Item1 + matrix[0, 1] * Nt.Item2 + matrix[0, 2] * Nt.Item3;
-            ret.Item2 = matrix[1, 0] * Nt.Item1 + matrix[1, 1] * Nt.Item2 + matrix[1, 2] * Nt.Item3;
-            ret.Item3 = matrix[2, 0] * Nt.Item1 + matrix[2, 1] * Nt.Item2 + matrix[2, 2] * Nt.Item3;
+            if (heightMap)
+            {
+                double[,] matrix = new double[3, 3];
+                matrix[0, 0] = T.Item1;
+                matrix[1, 0] = T.Item2;
+                matrix[2, 0] = T.Item3;
+                matrix[0, 1] = B.Item1;
+                matrix[1, 1] = B.Item2;
+                matrix[2, 1] = B.Item3;
+                matrix[0, 2] = N.Item1;
+                matrix[1, 2] = N.Item2;
+                matrix[2, 2] = N.Item3;
+                var Nt = ScaleTexture(I);
+                ret.Item1 = matrix[0, 0] * Nt.Item1 + matrix[0, 1] * Nt.Item2 + matrix[0, 2] * Nt.Item3;
+                ret.Item2 = matrix[1, 0] * Nt.Item1 + matrix[1, 1] * Nt.Item2 + matrix[1, 2] * Nt.Item3;
+                ret.Item3 = matrix[2, 0] * Nt.Item1 + matrix[2, 1] * Nt.Item2 + matrix[2, 2] * Nt.Item3;
+            }
+            else
+            {
+                var deltaX = nextIX.Item1 - I.Item1;
+                var deltaY = nextIY.Item1 - I.Item1;
+                var Tdeltax = (T.Item1 * deltaX, T.Item1 * deltaX, T.Item1 * deltaX);
+                var BdeltaY = (B.Item1 * deltaY, B.Item1 * deltaY, B.Item1 * deltaY);
+                var D = (Tdeltax.Item1 + BdeltaY.Item1, Tdeltax.Item2 + BdeltaY.Item2, Tdeltax.Item3 + BdeltaY.Item3);
+                ret = NormalizeVector((N.Item1 + 0.5 * D.Item1, N.Item2 + 0.5 * D.Item2, N.Item3 + 0.5 * D.Item3));
+            }
             return ret;
         }
 
