@@ -52,7 +52,7 @@ namespace GK_Projekt2
             ScaledVertexList = new List<(int, int, int, Face)>();
             ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
             (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled);
+            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled, _bitmap);
             sbLightZ.Value= sbLightZ.Maximum / 2;
             DrawObject();
             animationMutex = new System.Threading.Mutex();
@@ -87,7 +87,7 @@ namespace GK_Projekt2
                         _loadedObject = obj;
                         ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
                         (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled);
+                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled, _bitmap);
                         SetFillerValues();
                         _filler._texture = new Bitmap(this._texture, new Size(_bitmap.Width, _bitmap.Height));
                         if (!animationInProgress)

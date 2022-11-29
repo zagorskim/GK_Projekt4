@@ -23,6 +23,7 @@ namespace GK_Projekt2
         public Obj obj;
         public Bitmap _texture { get; set; }
         public Bitmap _normalMap { get; set; }
+        public Bitmap _bitmap { get; set; }
         public (int, int, int)[]  ScaledVertexOrder;
         public (double, double, double) Io = (1, 1, 1);
         public (double, double, double) Il = (1, 1, 1);
@@ -37,8 +38,9 @@ namespace GK_Projekt2
         public bool heightMap = false;
         #endregion
 
-        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap, bool heightMapToggle)
+        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap, bool heightMapToggle, Bitmap bitmap)
         {
+            this._bitmap = bitmap;
             heightMap = heightMapToggle;
             this._texture = texture;
             this.ScaledVertexOrder = ScaledVertexOrder;
@@ -160,9 +162,15 @@ namespace GK_Projekt2
 
         private System.Drawing.Color CalculateColor(int x, int y, Face face)
         {
-            (double, double, double) I;
+            (double, double, double) I, I1, I2, I3;
             var color = _texture.GetPixel(x, y);
+            var color1 = _texture.GetPixel(ScaledVertexOrder[face.VertexIndexList[0] - 1].Item1, ScaledVertexOrder[face.VertexIndexList[0] - 1].Item2);
+            var color2 = _texture.GetPixel(ScaledVertexOrder[face.VertexIndexList[1] - 1].Item1, ScaledVertexOrder[face.VertexIndexList[1] - 1].Item2);
+            var color3 = _texture.GetPixel(ScaledVertexOrder[face.VertexIndexList[2] - 1].Item1, ScaledVertexOrder[face.VertexIndexList[2] - 1].Item2);
             var It = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
+            var It1 = ((double)(color1.R / (decimal)maxByte), (double)(color1.G / (decimal)maxByte), (double)(color1.B / (decimal)maxByte));
+            var It2 = ((double)(color2.R / (decimal)maxByte), (double)(color2.G / (decimal)maxByte), (double)(color2.B / (decimal)maxByte));
+            var It3 = ((double)(color3.R / (decimal)maxByte), (double)(color3.G / (decimal)maxByte), (double)(color3.B / (decimal)maxByte));
             color = _normalMap.GetPixel(x, y);
             var Inm = ((double)(color.R / (decimal)maxByte), (double)(color.G / (decimal)maxByte), (double)(color.B / (decimal)maxByte));
             color = _normalMap.GetPixel(x <= this._normalMap.Height ? x + 1 : x, y);
@@ -172,9 +180,17 @@ namespace GK_Projekt2
             if (textureColor == true)
             {
                 I = It;
+                I1 = It1;
+                I2 = It2;
+                I3 = It3;
             }
             else
+            {
                 I = Io;
+                I1 = Io;
+                I2 = Io;
+                I3 = Io;
+            }
 
             var v1 = (obj.NVList[face.NVIndexList[0] - 1].X, obj.NVList[face.NVIndexList[0] - 1].Y, obj.NVList[face.NVIndexList[0] - 1].Z);
             var v2 = (obj.NVList[face.NVIndexList[1] - 1].X, obj.NVList[face.NVIndexList[1] - 1].Y, obj.NVList[face.NVIndexList[1] - 1].Z);
@@ -238,15 +254,15 @@ namespace GK_Projekt2
                 double cosVR3 = CalculateCosUsingScalarProduct((0, 0, 1), ((double)2m * cosNL3 * N3.Item1 - L.Item1, (double)2m * cosNL3 * N3.Item2 - L.Item2, (double)2m * cosNL3 * N3.Item3 - L.Item3));
                 cosVR3 = cosVR3 > 0 ? cosVR3 : 0;
 
-                double r1 = kd * Il.Item1 * I.Item1 * cosNL1 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR1, m);
-                double g1 = kd * Il.Item2 * I.Item2 * cosNL1 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR1, m);
-                double b1 = kd * Il.Item3 * I.Item3 * cosNL1 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR1, m);
-                double r2 = kd * Il.Item1 * I.Item1 * cosNL2 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR2, m);
-                double g2 = kd * Il.Item2 * I.Item2 * cosNL2 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR2, m);
-                double b2 = kd * Il.Item3 * I.Item3 * cosNL2 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR2, m);
-                double r3 = kd * Il.Item1 * I.Item1 * cosNL3 + ks * Il.Item1 * I.Item1 * Math.Pow(cosVR3, m);
-                double g3 = kd * Il.Item2 * I.Item2 * cosNL3 + ks * Il.Item2 * I.Item2 * Math.Pow(cosVR3, m);
-                double b3 = kd * Il.Item3 * I.Item3 * cosNL3 + ks * Il.Item3 * I.Item3 * Math.Pow(cosVR3, m);
+                double r1 = kd * Il.Item1 * I1.Item1 * cosNL1 + ks * Il.Item1 * I1.Item1 * Math.Pow(cosVR1, m);
+                double g1 = kd * Il.Item2 * I1.Item2 * cosNL1 + ks * Il.Item2 * I1.Item2 * Math.Pow(cosVR1, m);
+                double b1 = kd * Il.Item3 * I1.Item3 * cosNL1 + ks * Il.Item3 * I1.Item3 * Math.Pow(cosVR1, m);
+                double r2 = kd * Il.Item1 * I2.Item1 * cosNL2 + ks * Il.Item1 * I2.Item1 * Math.Pow(cosVR2, m);
+                double g2 = kd * Il.Item2 * I2.Item2 * cosNL2 + ks * Il.Item2 * I2.Item2 * Math.Pow(cosVR2, m);
+                double b2 = kd * Il.Item3 * I2.Item3 * cosNL2 + ks * Il.Item3 * I2.Item3 * Math.Pow(cosVR2, m);
+                double r3 = kd * Il.Item1 * I3.Item1 * cosNL3 + ks * Il.Item1 * I3.Item1 * Math.Pow(cosVR3, m);
+                double g3 = kd * Il.Item2 * I3.Item2 * cosNL3 + ks * Il.Item2 * I3.Item2 * Math.Pow(cosVR3, m);
+                double b3 = kd * Il.Item3 * I3.Item3 * cosNL3 + ks * Il.Item3 * I3.Item3 * Math.Pow(cosVR3, m);
 
                 double r, g, b;
                 (r, g, b) = Interpolate((r1, g1, b1), (r2, g2, b2), (r3, g3, b3), CalculateBaricentricRatio((x, y),

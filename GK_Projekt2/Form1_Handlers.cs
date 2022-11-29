@@ -20,7 +20,7 @@ namespace GK_Projekt2
                 _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
                 _fastBitmap = new FastBitmap(_bitmap);
                 (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled);
+                _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled, _bitmap);
                 _filler._texture = new Bitmap(_filler._texture, new Size(_bitmap.Width, _bitmap.Height));
                 SetFillerValues();
                 DrawObjectAnimation();
