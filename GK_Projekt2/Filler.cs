@@ -140,11 +140,7 @@ namespace GK_Projekt2
                         {
                             for (int x = x1; x <= x2; x++)
                             {
-                                //mutex.WaitOne();
-                                //bitmap.Lock();
                                 bitmap.SetPixel(x, i, CalculateColor(x, i, face));
-                                //bitmap.Unlock();
-                                //mutex.ReleaseMutex();
                             }
                         }
                         }

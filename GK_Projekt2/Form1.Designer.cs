@@ -75,6 +75,10 @@ namespace GK_Projekt2
             this.lblKd = new System.Windows.Forms.Label();
             this.sbKd = new System.Windows.Forms.HScrollBar();
             this.pPictureBoxPanel = new System.Windows.Forms.Panel();
+            this.tpbCanvas = new System.Windows.Forms.TableLayoutPanel();
+            this.pbCanvas4 = new System.Windows.Forms.PictureBox();
+            this.pbCanvas3 = new System.Windows.Forms.PictureBox();
+            this.pbCanvas2 = new System.Windows.Forms.PictureBox();
             this.pbCanvas = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -90,6 +94,10 @@ namespace GK_Projekt2
             this.flpInterpolationMethod.SuspendLayout();
             this.tlpSliders.SuspendLayout();
             this.pPictureBoxPanel.SuspendLayout();
+            this.tpbCanvas.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -122,7 +130,7 @@ namespace GK_Projekt2
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 88F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tlpMain.Size = new System.Drawing.Size(847, 916);
+            this.tlpMain.Size = new System.Drawing.Size(847, 935);
             this.tlpMain.TabIndex = 1;
             this.tlpMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
@@ -388,7 +396,7 @@ namespace GK_Projekt2
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpSliders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpSliders.Size = new System.Drawing.Size(333, 822);
+            this.tlpSliders.Size = new System.Drawing.Size(333, 841);
             this.tlpSliders.TabIndex = 4;
             this.tlpSliders.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
             // 
@@ -632,20 +640,62 @@ namespace GK_Projekt2
             // 
             // pPictureBoxPanel
             // 
-            this.pPictureBoxPanel.Controls.Add(this.pbCanvas);
+            this.pPictureBoxPanel.Controls.Add(this.tpbCanvas);
             this.pPictureBoxPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pPictureBoxPanel.Location = new System.Drawing.Point(10, 98);
             this.pPictureBoxPanel.Margin = new System.Windows.Forms.Padding(10);
             this.pPictureBoxPanel.Name = "pPictureBoxPanel";
-            this.pPictureBoxPanel.Size = new System.Drawing.Size(488, 476);
+            this.pPictureBoxPanel.Size = new System.Drawing.Size(488, 488);
             this.pPictureBoxPanel.TabIndex = 5;
+            // 
+            // tpbCanvas
+            // 
+            this.tpbCanvas.ColumnCount = 2;
+            this.tpbCanvas.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tpbCanvas.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tpbCanvas.Controls.Add(this.pbCanvas4, 1, 1);
+            this.tpbCanvas.Controls.Add(this.pbCanvas3, 0, 1);
+            this.tpbCanvas.Controls.Add(this.pbCanvas2, 1, 0);
+            this.tpbCanvas.Controls.Add(this.pbCanvas, 0, 0);
+            this.tpbCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tpbCanvas.Location = new System.Drawing.Point(0, 0);
+            this.tpbCanvas.Margin = new System.Windows.Forms.Padding(0);
+            this.tpbCanvas.Name = "tpbCanvas";
+            this.tpbCanvas.RowCount = 2;
+            this.tpbCanvas.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tpbCanvas.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tpbCanvas.Size = new System.Drawing.Size(488, 488);
+            this.tpbCanvas.TabIndex = 3;
+            // 
+            // pbCanvas4
+            // 
+            this.pbCanvas4.Location = new System.Drawing.Point(247, 247);
+            this.pbCanvas4.Name = "pbCanvas4";
+            this.pbCanvas4.Size = new System.Drawing.Size(237, 237);
+            this.pbCanvas4.TabIndex = 5;
+            this.pbCanvas4.TabStop = false;
+            // 
+            // pbCanvas3
+            // 
+            this.pbCanvas3.Location = new System.Drawing.Point(3, 247);
+            this.pbCanvas3.Name = "pbCanvas3";
+            this.pbCanvas3.Size = new System.Drawing.Size(237, 237);
+            this.pbCanvas3.TabIndex = 4;
+            this.pbCanvas3.TabStop = false;
+            // 
+            // pbCanvas2
+            // 
+            this.pbCanvas2.Location = new System.Drawing.Point(247, 3);
+            this.pbCanvas2.Name = "pbCanvas2";
+            this.pbCanvas2.Size = new System.Drawing.Size(237, 237);
+            this.pbCanvas2.TabIndex = 3;
+            this.pbCanvas2.TabStop = false;
             // 
             // pbCanvas
             // 
-            this.pbCanvas.Location = new System.Drawing.Point(0, 0);
-            this.pbCanvas.Margin = new System.Windows.Forms.Padding(0);
+            this.pbCanvas.Location = new System.Drawing.Point(3, 3);
             this.pbCanvas.Name = "pbCanvas";
-            this.pbCanvas.Size = new System.Drawing.Size(488, 476);
+            this.pbCanvas.Size = new System.Drawing.Size(237, 237);
             this.pbCanvas.TabIndex = 2;
             this.pbCanvas.TabStop = false;
             this.pbCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tlpMain_MouseUp);
@@ -658,7 +708,7 @@ namespace GK_Projekt2
             this.flowLayoutPanel1.Controls.Add(this.rbrbHeightMapFalse);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 587);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 599);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(502, 73);
             this.flowLayoutPanel1.TabIndex = 9;
@@ -737,7 +787,7 @@ namespace GK_Projekt2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(847, 916);
+            this.ClientSize = new System.Drawing.Size(847, 935);
             this.Controls.Add(this.tlpMain);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -754,6 +804,10 @@ namespace GK_Projekt2
             this.tlpSliders.ResumeLayout(false);
             this.tlpSliders.PerformLayout();
             this.pPictureBoxPanel.ResumeLayout(false);
+            this.tpbCanvas.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCanvas2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
@@ -817,6 +871,10 @@ namespace GK_Projekt2
         private Label label1;
         private RadioButton rbHeightMapTrue;
         private RadioButton rbrbHeightMapFalse;
+        private TableLayoutPanel tpbCanvas;
+        private PictureBox pbCanvas4;
+        private PictureBox pbCanvas3;
+        private PictureBox pbCanvas2;
     }
 
 }

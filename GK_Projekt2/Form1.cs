@@ -18,17 +18,17 @@ namespace GK_Projekt2
         #region fields
 
         private const int polySize = 3;
-        private Obj _loadedObject { get; set; }
-        public List<((int, int, int), (int, int, int))> ScaledEdgeList;
-        public List<(int, int, int, Face)> ScaledVertexList;
-        public (int, int, int)[] ScaledVertexOrder;
+        private List<Obj> _loadedObject { get; set; }
+        public List<List<((int, int, int), (int, int, int))>> ScaledEdgeList;
+        public List<List<(int, int, int, Face)>> ScaledVertexList;
+        public List<(int, int, int)[]> ScaledVertexOrder;
         public System.Threading.Mutex animationMutex;
-        public Bitmap _bitmap;
-        public Bitmap _texture;
-        public Bitmap _normalMap;
-        public FastBitmap _fastBitmap;
+        public List<Bitmap> _bitmap;
+        public List<Bitmap> _texture;
+        public List<Bitmap> _normalMap;
+        public List<FastBitmap> _fastBitmap;
         // need to make a list of fillers to be able to fill different polygons of different vertex count
-        public Filler _filler;
+        public List<Filler> _filler;
         public bool animationInProgress = false;
         public bool importing;
         private static int lastTick;
@@ -40,19 +40,30 @@ namespace GK_Projekt2
         public Form1()
         {
             InitializeComponent();
-            _bitmap = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
-            _fastBitmap = new FastBitmap(_bitmap);
-            var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
-            _texture = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
-            temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
-            _normalMap = new Bitmap(temp, new Size(_bitmap.Width, _bitmap.Height));
-            _fastBitmap = new FastBitmap(_bitmap);
-            _loadedObject = ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj");
-            ScaledEdgeList = new List<((int, int, int), (int, int, int))>();
-            ScaledVertexList = new List<(int, int, int, Face)>();
-            ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
-            (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-            _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled, _bitmap);
+                _loadedObject = new List<Obj>();
+                ScaledEdgeList = new List<List<((int, int, int), (int, int, int))>>();
+                ScaledVertexList = new List<List<(int, int, int, Face)>>();
+                ScaledVertexOrder = new List<(int, int, int)[]>();
+                _bitmap = new List<Bitmap>();
+                _texture = new List<Bitmap>();
+                _normalMap = new List<Bitmap>();
+                _fastBitmap = new List<FastBitmap>();
+                _filler = new List<Filler>();
+            for (var i = 0; i < tpbCanvas.ColumnCount * tpbCanvas.RowCount; i++)
+            {
+                _bitmap.Add(new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2));
+                _fastBitmap.Add(new FastBitmap(_bitmap[i]));
+                var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+                _texture.Add(new Bitmap(temp, new Size(_bitmap[i].Width, _bitmap[i].Height)));
+                temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
+                _normalMap.Add(new Bitmap(temp, new Size(_bitmap[i].Width, _bitmap[i].Height)));
+                _loadedObject.Add(ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/hemisphereAVG.obj"));
+                ScaledEdgeList.Add(new List<((int, int, int), (int, int, int))>());
+                ScaledVertexList.Add(new List<(int, int, int, Face)>());
+                ScaledVertexOrder.Add(new (int, int, int)[_loadedObject[i].TextureList.Count]);
+                (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_loadedObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
+                _filler.Add(new Filler(_loadedObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i]));
+            }
             sbLightZ.Value= sbLightZ.Maximum / 2;
             DrawObject();
             animationMutex = new System.Threading.Mutex();
@@ -70,26 +81,30 @@ namespace GK_Projekt2
             importing = true;
             if (!animationInProgress)
             {
-                _bitmap = new Bitmap(pbCanvas.Image.Width + 2, pbCanvas.Image.Height + 2);
-                _fastBitmap = new FastBitmap(_bitmap);
-                var obj = new Obj();
+                for (var i = 0; i < _bitmap.Count; i++)
+                {
+                    _bitmap[i] = new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2);
+                    _fastBitmap[i] = new FastBitmap(_bitmap[i]);
+                }
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
                     dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                     dialog.Filter = "obj files (*.obj)|*.obj";
                     dialog.FilterIndex = 2;
                     dialog.RestoreDirectory = true;
+                    dialog.Multiselect = true;
 
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        var filePath = dialog.FileName;
-                        obj.LoadObj(dialog.OpenFile());
-                        _loadedObject = obj;
-                        ScaledVertexOrder = new (int, int, int)[_loadedObject.TextureList.Count];
-                        (ScaledEdgeList, ScaledVertexList, ScaledVertexOrder) = ScaleVertices(_loadedObject.FaceList, pbCanvas.Width, pbCanvas.Height);
-                        _filler = new Filler(_loadedObject, pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList, ScaledVertexOrder, _texture, _normalMap, isHeightMapEnabled, _bitmap);
+                        for (var i = 0; i < dialog.FileNames.Length; i++)
+                        {
+                            var obj = ReadObjFile(dialog.FileNames[i]);
+                            _loadedObject[i] = obj;
+                            ScaledVertexOrder[i] = new (int, int, int)[_loadedObject[i].TextureList.Count];
+                            (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_loadedObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
+                            _filler[i] = new Filler(_loadedObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i]);
+                        }
                         SetFillerValues();
-                        _filler._texture = new Bitmap(this._texture, new Size(_bitmap.Width, _bitmap.Height));
                         if (!animationInProgress)
                             DrawObject();
                     }
@@ -101,86 +116,123 @@ namespace GK_Projekt2
         // Asynchronous drawing provides better UI behaviour, but sometimes doesn't complete calculations, disabling async drawing will fix it
         public async void DrawObject()
         {
-            if (!_fastBitmap.Locked)
+            for (var i = 0; i < _bitmap.Count; i++)
             {
-                _fastBitmap.Lock();
-                await Task.Run(() => FillMesh(_fastBitmap));
-                _fastBitmap.Unlock();
-                if (cbMesh.Checked)
-                    DrawLines(_bitmap, System.Drawing.Color.Black, 1);
-                pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                if (!_fastBitmap[i].Locked)
+                {
+                    _fastBitmap[i].Lock();
+                    await Task.Run(() => FillMesh(_fastBitmap[i], i));
+                    _fastBitmap[i].Unlock();
+                    if (cbMesh.Checked)
+                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1);
+                    switch (i)
+                    {
+                        case 0:
+                            pbCanvas.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 1:
+                            pbCanvas2.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 2:
+                            pbCanvas3.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 3:
+                            pbCanvas4.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                    }
+                }
             }
         }
 
         public void DrawObjectAnimation()
         {
-            if (!_fastBitmap.Locked)
+            for (var i = 0; i < _bitmap.Count; i++)
             {
-                _fastBitmap.Lock();
-                FillMesh(_fastBitmap);
-                _fastBitmap.Unlock();
-                if (cbMesh.Checked)
-                    DrawLines(_bitmap, System.Drawing.Color.Black, 1);
-                pbCanvas.Image = _bitmap.Clone(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                if (!_fastBitmap[i].Locked)
+                {
+                    _fastBitmap[i].Lock();
+                    FillMesh(_fastBitmap[i], i);
+                    _fastBitmap[i].Unlock();
+                    if (cbMesh.Checked)
+                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1);
+                    switch (i)
+                    {
+                        case 0:
+                            pbCanvas.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 1:
+                            pbCanvas2.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 2:
+                            pbCanvas3.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                        case 3:
+                            pbCanvas4.Image = _bitmap[i].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                            break;
+                    }
+                }
             }
         }
 
         public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size)
         {
-            using (var graphics = Graphics.FromImage(newBitmap))
+            for (var j = 0; j < _bitmap.Count; j++)
             {
-                Pen pen = new Pen(color, size);
-                foreach (var i in ScaledEdgeList)
+                using (var graphics = Graphics.FromImage(newBitmap))
                 {
-                    graphics.DrawLine(pen, i.Item1.Item1, i.Item1.Item2, i.Item2.Item1, i.Item2.Item2);
-                }
-                pen.Dispose();
-            }
-        }
-
-        public void FillMesh(FastBitmap bitmap)
-        {
-            var temp = new (int, int)[polySize];
-            for (var i = 0; i < ScaledVertexList.Count; i++)
-            {
-                temp[i % polySize] = (ScaledVertexList[i].Item1, ScaledVertexList[i].Item2);
-                if (i % polySize == 2)
-                {
-                    //var t = new Thread(() => _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4));
-                    //t.Start();
-                    _filler.FillPoly(bitmap, temp, ScaledVertexList[i].Item4); 
+                    Pen pen = new Pen(color, size);
+                    foreach (var i in ScaledEdgeList[j])
+                    {
+                        graphics.DrawLine(pen, i.Item1.Item1, i.Item1.Item2, i.Item2.Item1, i.Item2.Item2);
+                    }
+                    pen.Dispose();
                 }
             }
         }
 
-        public (int, int, int) ScaleToCurrentSize(double x, double y, double z)
+        public void FillMesh(FastBitmap bitmap, int index)
         {
-            return ((int)((x * 0.99 + 1) * _bitmap.Height / 2), (int)((y * 0.99 + 1) * _bitmap.Height / 2), (int)((z * 0.99) * _bitmap.Height / 2));
+                var temp = new (int, int)[polySize];
+                for (var i = 0; i < ScaledVertexList[index].Count; i++)
+                {
+                    temp[i % polySize] = (ScaledVertexList[index][i].Item1, ScaledVertexList[index][i].Item2);
+                    if (i % polySize == 2)
+                    {
+                        _filler[index].FillPoly(bitmap, temp, ScaledVertexList[index][i].Item4);
+                    }
+                }
         }
 
-        public (List<((int, int, int), (int, int, int))>, List<(int, int, int, Face)>, (int, int, int)[]) ScaleVertices(List<Face> faces, int width, int height)
+        public (int, int, int) ScaleToCurrentSize(double x, double y, double z, Bitmap bitmap)
+        {
+            return ((int)((x * 0.99 + 1) * bitmap.Height / 2), (int)((y * 0.99 + 1) * bitmap.Height / 2), (int)((z * 0.99) * bitmap.Height / 2));
+        }
+
+        public (List<((int, int, int), (int, int, int))>, List<(int, int, int, Face)>, (int, int, int)[]) ScaleVertices(List<Face> faces, int width, int height, int index)
         {
             var ret1 = new List<((int, int, int), (int, int, int))>();
             var ret2 = new List<(int, int, int, Face)>();
-            var ret3 = new (int, int, int)[_loadedObject.VertexList.Count];
+            var ret3 = new (int, int, int)[_loadedObject[index].VertexList.Count];
             foreach (var i in faces)
             {
                 for (int j = 0; j < i.VertexIndexList.Length; j++)
                 {
-                    var point1 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[j] - 1].X, 
-                        _loadedObject.VertexList[i.VertexIndexList[j] - 1].Y, 
-                        _loadedObject.VertexList[i.VertexIndexList[j] - 1].Z);
-                    var point2 = ScaleToCurrentSize(_loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X, 
-                        _loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y, 
-                        _loadedObject.VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Z);
+                    var point1 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[j] - 1].X, 
+                        _loadedObject[index].VertexList[i.VertexIndexList[j] - 1].Y, 
+                        _loadedObject[index].VertexList[i.VertexIndexList[j] - 1].Z,
+                        _bitmap[index]);
+                    var point2 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X, 
+                        _loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y, 
+                        _loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Z,
+                        _bitmap[index]);
                     var temp = ((point1.Item1, point1.Item2, point1.Item3), (point2.Item1, point2.Item2, point2.Item3));
                     ret1.Add(temp);
                     ret2.Add((point1.Item1, point1.Item2, point1.Item3, i));
                 }
             }
-            for (var i = 0; i < _loadedObject.VertexList.Count; i++)
+            for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
             {
-                var point = ScaleToCurrentSize(_loadedObject.VertexList[i].X, _loadedObject.VertexList[i].Y, _loadedObject.VertexList[i].Z);
+                var point = ScaleToCurrentSize(_loadedObject[index].VertexList[i].X, _loadedObject[index].VertexList[i].Y, _loadedObject[index].VertexList[i].Z, _bitmap[index]);
                 ret3[i] = point;
             }
             return (ret1, ret2, ret3);
@@ -193,23 +245,26 @@ namespace GK_Projekt2
             (int, int) middle = (pbCanvas.Width / 2, pbCanvas.Height / 2);
             while (animationInProgress)
             {
-                int radius = pbCanvas.Width / 2;
-                for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
+                for (var j = 0; j < _bitmap.Count; j++)
                 {
-                    _filler.light.Item1 = i;
-                    double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
-                    _filler.light.Item2 = (int)y;
-                    DrawObjectAnimation();
-                    CalculateFrameRate();
-                }
-                for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
-                {
-                    _filler.light.Item1 = i;
-                    double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
-                    _filler.light.Item2 = (int)y;
-                    if(y < 10000)
-                    DrawObjectAnimation();
-                    CalculateFrameRate();
+                    int radius = pbCanvas.Width / 2;
+                    for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
+                    {
+                        _filler[j].light.Item1 = i;
+                        double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                        _filler[j].light.Item2 = (int)y;
+                        DrawObjectAnimation();
+                        CalculateFrameRate();
+                    }
+                    for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
+                    {
+                        _filler[j].light.Item1 = i;
+                        double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                        _filler[j].light.Item2 = (int)y;
+                        if (y < 10000)
+                            DrawObjectAnimation();
+                        CalculateFrameRate();
+                    }
                 }
             }
             animationInProgress = false;
