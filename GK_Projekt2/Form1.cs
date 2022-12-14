@@ -7,12 +7,15 @@ using System.Windows.Forms;
 using FastBitmapLib;
 using System.CodeDom.Compiler;
 using System.IO;
-
+using System.Drawing.Configuration;
+using System.Numerics;
+using System;
+using System.Runtime.InteropServices;
 // èrÛd≥o úwiat≥a
 namespace GK_Projekt2
 {
-// Parsing *.obj files (ObjParser) taken from some open source implementation (https://github.com/stefangordon/ObjParser.git)
-// in order to quicken up the process of doing this project :) (also extended it with some other functionalities that I needed)
+    // Parsing *.obj files (ObjParser) taken from some open source implementation (https://github.com/stefangordon/ObjParser.git)
+    // in order to quicken up the process of doing this project :) (also extended it with some other functionalities that I needed)
     public partial class Form1 : Form
     {
         #region fields
@@ -35,20 +38,36 @@ namespace GK_Projekt2
         private static int lastFrameRate;
         private static int frameRate;
         private bool isHeightMapEnabled = false;
+        private Vector4 cameraPosition;
+        private List<Matrix4x4> transforms;
+        private float rotationX = 1;
+        private float rotationY = 0;
+        private float rotationZ = 0;
         #endregion
 
         public Form1()
         {
             InitializeComponent();
-                _loadedObject = new List<Obj>();
-                ScaledEdgeList = new List<List<((int, int, int), (int, int, int))>>();
-                ScaledVertexList = new List<List<(int, int, int, Face)>>();
-                ScaledVertexOrder = new List<(int, int, int)[]>();
-                _bitmap = new List<Bitmap>();
-                _texture = new List<Bitmap>();
-                _normalMap = new List<Bitmap>();
-                _fastBitmap = new List<FastBitmap>();
-                _filler = new List<Filler>();
+            _loadedObject = new List<Obj>();
+            ScaledEdgeList = new List<List<((int, int, int), (int, int, int))>>();
+            ScaledVertexList = new List<List<(int, int, int, Face)>>();
+            ScaledVertexOrder = new List<(int, int, int)[]>();
+            _bitmap = new List<Bitmap>();
+            _texture = new List<Bitmap>();
+            _normalMap = new List<Bitmap>();
+            _fastBitmap = new List<FastBitmap>();
+            _filler = new List<Filler>();
+            cameraPosition = new Vector4(2, (float)2.5, 3, 1);
+            transforms = new List<Matrix4x4>();
+            transforms.Add(Matrix4x4.CreateRotationX((float)1));
+            transforms.Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition.X, cameraPosition.Y, cameraPosition.Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1)));
+            float e = 1;
+            float a = 1;
+            float n = (float)0.075;
+            float f = (float)0.13;
+
+            transforms.Add(new Matrix4x4(e, 0, 0, 0, 0, e / a, 0, 0, 0, 0, -(f + n) / (f - n), (-2 * f * n) / (f - n), 0, 0, -1, 0));
+
             for (var i = 0; i < tpbCanvas.ColumnCount * tpbCanvas.RowCount; i++)
             {
                 _bitmap.Add(new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2));
@@ -64,7 +83,7 @@ namespace GK_Projekt2
                 (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_loadedObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
                 _filler.Add(new Filler(_loadedObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i]));
             }
-            sbLightZ.Value= sbLightZ.Maximum / 2;
+            sbLightZ.Value = sbLightZ.Maximum / 2;
             DrawObject();
             animationMutex = new System.Threading.Mutex();
         }
@@ -120,11 +139,20 @@ namespace GK_Projekt2
             {
                 if (!_fastBitmap[i].Locked)
                 {
-                    _fastBitmap[i].Lock();
-                    await Task.Run(() => FillMesh(_fastBitmap[i], i));
-                    _fastBitmap[i].Unlock();
+                    // Commented on lab
+                    // Filling and shading
+                    //_fastBitmap[i].Lock();
+                    //await Task.Run(() => FillMesh(_fastBitmap[i], i));
+                    //_fastBitmap[i].Unlock();
+
+                    // Transform
+                    if (i == 1)
+                        TransformMesh(i);
+
+                    //Drawing mesh
                     if (cbMesh.Checked)
-                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1);
+                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1, i);
+
                     switch (i)
                     {
                         case 0:
@@ -150,11 +178,16 @@ namespace GK_Projekt2
             {
                 if (!_fastBitmap[i].Locked)
                 {
-                    _fastBitmap[i].Lock();
-                    FillMesh(_fastBitmap[i], i);
-                    _fastBitmap[i].Unlock();
+                    // Lab comment
+                    //_fastBitmap[i].Lock();
+                    //FillMesh(_fastBitmap[i], i);
+                    //_fastBitmap[i].Unlock();
+
+                    if (i == 1)
+                        TransformMesh(i);
+
                     if (cbMesh.Checked)
-                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1);
+                        DrawLines(_bitmap[i], System.Drawing.Color.Black, 1, i);
                     switch (i)
                     {
                         case 0:
@@ -174,33 +207,30 @@ namespace GK_Projekt2
             }
         }
 
-        public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size)
+        public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size, int index)
         {
-            for (var j = 0; j < _bitmap.Count; j++)
-            {
                 using (var graphics = Graphics.FromImage(newBitmap))
                 {
                     Pen pen = new Pen(color, size);
-                    foreach (var i in ScaledEdgeList[j])
+                    foreach (var i in ScaledEdgeList[index])
                     {
                         graphics.DrawLine(pen, i.Item1.Item1, i.Item1.Item2, i.Item2.Item1, i.Item2.Item2);
                     }
                     pen.Dispose();
                 }
-            }
         }
 
         public void FillMesh(FastBitmap bitmap, int index)
         {
-                var temp = new (int, int)[polySize];
-                for (var i = 0; i < ScaledVertexList[index].Count; i++)
+            var temp = new (int, int)[polySize];
+            for (var i = 0; i < ScaledVertexList[index].Count; i++)
+            {
+                temp[i % polySize] = (ScaledVertexList[index][i].Item1, ScaledVertexList[index][i].Item2);
+                if (i % polySize == 2)
                 {
-                    temp[i % polySize] = (ScaledVertexList[index][i].Item1, ScaledVertexList[index][i].Item2);
-                    if (i % polySize == 2)
-                    {
-                        _filler[index].FillPoly(bitmap, temp, ScaledVertexList[index][i].Item4);
-                    }
+                    _filler[index].FillPoly(bitmap, temp, ScaledVertexList[index][i].Item4);
                 }
+            }
         }
 
         public (int, int, int) ScaleToCurrentSize(double x, double y, double z, Bitmap bitmap)
@@ -217,12 +247,12 @@ namespace GK_Projekt2
             {
                 for (int j = 0; j < i.VertexIndexList.Length; j++)
                 {
-                    var point1 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[j] - 1].X, 
-                        _loadedObject[index].VertexList[i.VertexIndexList[j] - 1].Y, 
+                    var point1 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[j] - 1].X,
+                        _loadedObject[index].VertexList[i.VertexIndexList[j] - 1].Y,
                         _loadedObject[index].VertexList[i.VertexIndexList[j] - 1].Z,
                         _bitmap[index]);
-                    var point2 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X, 
-                        _loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y, 
+                    var point2 = ScaleToCurrentSize(_loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X,
+                        _loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y,
                         _loadedObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Z,
                         _bitmap[index]);
                     var temp = ((point1.Item1, point1.Item2, point1.Item3), (point2.Item1, point2.Item2, point2.Item3));
@@ -245,6 +275,10 @@ namespace GK_Projekt2
             (int, int) middle = (pbCanvas.Width / 2, pbCanvas.Height / 2);
             while (animationInProgress)
             {
+                // Lab 4 modifs
+                rotationX += (float)0.01;
+                transforms[0] = Matrix4x4.CreateRotationX(rotationX);
+
                 for (var j = 0; j < _bitmap.Count; j++)
                 {
                     int radius = pbCanvas.Width / 2;
@@ -280,6 +314,42 @@ namespace GK_Projekt2
             }
             frameRate++;
             System.Diagnostics.Debug.WriteLine(lastFrameRate);
+        }
+
+        public static Vector4 TransformVector(Vector4 v, Matrix4x4 m)
+        {
+            return Vector4.Transform(v, m);
+        }
+
+        private void TransformMesh(int index)
+        {
+                Vector4 point;
+                for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
+                {
+                    point = new Vector4((float)_loadedObject[index].VertexList[i].X, 
+                        (float)_loadedObject[index].VertexList[i].Y, 
+                        (float)_loadedObject[index].VertexList[i].Z, 
+                        (float)1);
+                if (point.X >= -1 && point.X <= 1 && point.Y >= -1 && point.Y <= 1 && point.Z >= -1 && point.Z <= 1)
+                {
+                    point = TransformVector(point, transforms[0]);
+                    point = TransformVector(point, transforms[1]);
+                    point = TransformVector(point, transforms[2]);
+
+                    point.X /= point.W;
+                    point.Y /= point.W;
+                    point.Z /= point.W;
+
+                    (_loadedObject[index].VertexList[i].X,
+                        _loadedObject[index].VertexList[i].Y,
+                        _loadedObject[index].VertexList[i].Z) =
+                        (point.X, point.Y, point.Z);
+
+                }
+                (ScaledEdgeList[index], ScaledVertexList[index], ScaledVertexOrder[index]) = ScaleVertices(
+                    _loadedObject[index].FaceList, pbCanvas.Width, pbCanvas.Height, index);
+
+            }
         }
     }
 }
