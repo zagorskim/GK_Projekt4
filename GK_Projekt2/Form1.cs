@@ -49,6 +49,8 @@ namespace GK_Projekt2
         private float[] n = new float[1];
         private float[] f = new float[1];
         private int currentObject = 0;
+        public double[,] ZBuffer;
+
         #endregion
 
         public Form1()
@@ -70,15 +72,19 @@ namespace GK_Projekt2
             cameraPosition[0] = new Vector4(2, (float)2.5, 3, 1);
             e[currentObject] = (float)1;
             a[currentObject] = (float)1;
-            n[currentObject] = (float)0.075;
-            f[currentObject] = (float)0.13;
+            n[currentObject] = (float)3;
+            f[currentObject] = (float)10;
             transforms = new List<List<Matrix4x4>>();
             transforms.Add(new List<Matrix4x4>());
             transforms[0].Add(Matrix4x4.CreateRotationX((float)0));
             transforms[0].Add(Matrix4x4.CreateRotationX((float)0));
             transforms[0].Add(Matrix4x4.CreateRotationY((float)0));
-            transforms[0].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1)));
+            transforms[0].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(0, 0, 0), new Vector3(5, 5, 5)));
             transforms[0].Add(Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]));
+            ZBuffer = new double[Width, Height];
+            for (int i = 0; i < ZBuffer.GetLength(0); i++)
+                for (int j = 0; j < ZBuffer.GetLength(1); j++)
+                    ZBuffer[i, j] = double.MaxValue;
             for (var i = 0; i < tpbCanvas.ColumnCount * tpbCanvas.RowCount; i++)
             {
                 _bitmap.Add(new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2));
@@ -93,7 +99,7 @@ namespace GK_Projekt2
                 ScaledVertexList.Add(new List<(int, int, int, Face)>());
                 ScaledVertexOrder.Add(new (int, int, int)[_modelObject[i].TextureList.Count]);
                 (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_loadedObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
-                _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i]));
+                _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i], ZBuffer));
             }
             sbLightZ.Value = sbLightZ.Maximum / 2;
             DrawObject();
@@ -158,13 +164,13 @@ namespace GK_Projekt2
                             transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                             transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                             transforms[i].Add(Matrix4x4.CreateRotationY((float)0));
-                            transforms[i].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1)));
+                            transforms[i].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(0, 0, 0), new Vector3(5, 5, 5)));
                             transforms[i].Add(Matrix4x4.CreatePerspectiveFieldOfView(e[i], a[i], n[i], f[i]));
                             // Temporary bitmap assigning
                             _bitmap.Add(tempBitmap);
 
                             (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_modelObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
-                            _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[0], _normalMap[0], isHeightMapEnabled, _bitmap[i]));
+                            _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[0], _normalMap[0], isHeightMapEnabled, _bitmap[i], ZBuffer));
 
                         }
                         SetFillerValues();
@@ -183,8 +189,10 @@ namespace GK_Projekt2
                 {
                     using (var graphics = Graphics.FromImage(_bitmap[0]))
                         graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height));
-
-                    for (var i = 0; i < _loadedObject.Count; i++)
+                    for (int i = 0; i < ZBuffer.GetLength(0); i++)
+                        for (int j = 0; j < ZBuffer.GetLength(1); j++)
+                            ZBuffer[i, j] = double.MaxValue;
+                for (var i = 0; i < _loadedObject.Count; i++)
                     {
                             // Transform
                             TransformMesh(i);
@@ -212,8 +220,10 @@ namespace GK_Projekt2
                 {
                     using (var graphics = Graphics.FromImage(_bitmap[0]))
                         graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height));
-
-                    for (var i = 0; i < _loadedObject.Count; i++)
+                    for (int i = 0; i < ZBuffer.GetLength(0); i++)
+                        for (int j = 0; j < ZBuffer.GetLength(1); j++)
+                            ZBuffer[i, j] = double.MaxValue;
+                for (var i = 0; i < _loadedObject.Count; i++)
                     {
                             // Lab comment
                             //_fastBitmap[i].Lock();
@@ -366,9 +376,11 @@ namespace GK_Projekt2
         private void TransformMesh(int index)
         {
                 Vector4 point;
-                _modelObject[index].VertexList.Clear();
+                Vector4 normalVector;
+            _modelObject[index].VertexList.Clear();
                 for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
                 {
+                    // points transformations
                     point = new Vector4((float)_loadedObject[index].VertexList[i].X, 
                         (float)_loadedObject[index].VertexList[i].Y, 
                         (float)_loadedObject[index].VertexList[i].Z, 
@@ -385,6 +397,21 @@ namespace GK_Projekt2
                     vertex.Y = point.Y;
                     vertex.Z = point.Z;
                     _modelObject[index].VertexList.Add(vertex);
+
+                // Normal vectors transformations
+                }
+                for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
+                {
+                    normalVector = new Vector4((float)_loadedObject[index].NVList[i].X, 
+                        (float)_loadedObject[index].NVList[i].Y, 
+                        (float)_loadedObject[index].NVList[i].Z, 0);
+                    foreach (var t in transforms[index])
+                        normalVector = TransformVector(normalVector, t);
+
+                    _modelObject[index].NVList[i] = new NormalVector();
+                    _modelObject[index].NVList[i].X = normalVector.X;
+                    _modelObject[index].NVList[i].X = normalVector.Y;
+                    _modelObject[index].NVList[i].X = normalVector.Z;
                 }
                 (ScaledEdgeList[index], ScaledVertexList[index], ScaledVertexOrder[index]) = ScaleVertices(
                     _modelObject[index].FaceList, pbCanvas.Width, pbCanvas.Height, index);

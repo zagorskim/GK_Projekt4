@@ -36,9 +36,11 @@ namespace GK_Projekt2
         public (int, int, int) light = (0, 0, 0);
         public Mutex mutex;
         public bool heightMap = false;
+        public double[,] ZBuffer;
+
         #endregion
 
-        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap, bool heightMapToggle, Bitmap bitmap)
+        public Filler(Obj obj, int Height, int Width, int polyCount, List<(int, int, int, Face)> ScaledVertices, (int, int, int)[] ScaledVertexOrder, Bitmap texture, Bitmap normalMap, bool heightMapToggle, Bitmap bitmap, double[,] ZBuffer)
         {
             this._bitmap = bitmap;
             heightMap = heightMapToggle;
@@ -57,6 +59,7 @@ namespace GK_Projekt2
                 EdgeTable[i] = new EdgeTab(polyCount);
             ActiveEdgeTuple = new EdgeTab(polyCount);
             _normalMap = normalMap;
+            this.ZBuffer = ZBuffer;
         }
 
         public void FillPoly(FastBitmapLib.FastBitmap bitmap, (int, int)[] e, Face face)
@@ -71,10 +74,21 @@ namespace GK_Projekt2
         public void Fill(FastBitmapLib.FastBitmap bitmap, Face face)
         {
             int i, j, x1, ymax1, x2, ymax2, FillFlag = 0, coordCount;
-                for (i = 0; i < Height; i++)
-                {
-                    for (j = 0; j < EdgeTable[i].count; j++)
+            //double p1;
+            //double p2;
+            //double p3;
+            var p1 = obj.VertexList[face.VertexIndexList[0] - 1];
+            var p2 = obj.VertexList[face.VertexIndexList[1] - 1];
+            var p3 = obj.VertexList[face.VertexIndexList[2] - 1];
+            for (i = 0; i < Height; i++)
+            {
+                for (j = 0; j < EdgeTable[i].count; j++)
                     {
+                    (var r1, var r2, var r3) = CalculateBaricentricRatio((i, j), ((int)p1.X, (int)p1.Y, (int)p1.Z), ((int)p2.X, (int)p2.Y, (int)p2.Z), ((int)p3.X, (int)p3.Y, (int)p3.Z));
+                        if (( r1 * p1.Z + r2 * p2.Z + r3 * p3.Z) > ZBuffer[i, j])
+                            continue;
+                        ZBuffer[i, j] = r1 * p1.Z + r2 * p2.Z + r3 * p3.Z;
+
                         ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].ymax = EdgeTable[i].buckets[j].ymax;
                         ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].xofymin = EdgeTable[i].buckets[j].xofymin;
                         ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].slopeinverse = EdgeTable[i].buckets[j].slopeinverse;
