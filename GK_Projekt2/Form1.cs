@@ -32,7 +32,6 @@ namespace GK_Projekt2
         public List<Bitmap> _texture;
         public List<Bitmap> _normalMap;
         public List<FastBitmap> _fastBitmap;
-        // need to make a list of fillers to be able to fill different polygons of different vertex count
         public List<Filler> _filler;
         public bool animationInProgress = false;
         public bool importing;
@@ -194,6 +193,7 @@ namespace GK_Projekt2
                     // Filling and shading
                     _fastBitmap[0].Lock();
                     FillMesh(_fastBitmap[0], i);
+                    // async not working for multiple objects filling
                     //await Task.Run(() => FillMesh(_fastBitmap[0], i));
                     _fastBitmap[0].Unlock();
 
@@ -388,94 +388,6 @@ namespace GK_Projekt2
                 }
                 (ScaledEdgeList[index], ScaledVertexList[index], ScaledVertexOrder[index]) = ScaleVertices(
                     _modelObject[index].FaceList, pbCanvas.Width, pbCanvas.Height, index);
-        }
-
-        private void sbRotationX_Scroll(object sender, ScrollEventArgs e)
-        {
-            rotationX[currentObject] = (float)(e.NewValue * 3.14 / 100);
-            //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][0] = Matrix4x4.CreateRotationX(rotationX[currentObject]);
-            DrawObject();
-        }
-
-        private void sbRotationY_Scroll(object sender, ScrollEventArgs e)
-        {
-            rotationY[currentObject] = (float)(e.NewValue * 3.14 / 100);
-            //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][1] = Matrix4x4.CreateRotationY(rotationY[currentObject]);
-            DrawObject();
-        }
-
-        private void sbRotationZ_Scroll(object sender, ScrollEventArgs e)
-        {
-            rotationZ[currentObject] = (float)(e.NewValue * 3.14 / 100);
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][2] = Matrix4x4.CreateRotationX(rotationZ[currentObject]);
-            DrawObject();
-        }
-
-        private void hScrollBar5_Scroll(object sender, ScrollEventArgs e)
-        {
-            cameraPosition[currentObject].X = (float)(e.NewValue - 50) / 10;
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
-            DrawObject();
-        }
-
-        private void sbCameraPositionY_Scroll(object sender, ScrollEventArgs e)
-        {
-            cameraPosition[currentObject].Y = (float)(e.NewValue - 50) / 10;
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
-            DrawObject();
-        }
-
-        private void sbCameraPositionZ_Scroll(object sender, ScrollEventArgs e)
-        {
-            cameraPosition[currentObject].Z = (float)(e.NewValue - 50) / 10;
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
-            DrawObject();
-        }
-
-        private void sbEValue_Scroll(object sender, ScrollEventArgs ev)
-        {
-            e[currentObject] = (float)ev.NewValue / 50;
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
-            DrawObject();
-        }
-
-        private void sbAValue_Scroll(object sender, ScrollEventArgs ev)
-        {
-            a[currentObject] = (float)ev.NewValue / 50;
-            //for (var i = 0; i < transforms.Count; i++)
-                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
-            DrawObject();
-        }
-
-        private void sbNValue_Scroll(object sender, ScrollEventArgs ev)
-        {
-            n[currentObject] = (float)ev.NewValue / 300;
-            //for (var i = 0; i < transforms.Count; i++)
-                if (n[currentObject] < f[currentObject])
-                    transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
-            DrawObject();
-        }
-
-        private void sbFValue_Scroll(object sender, ScrollEventArgs ev)
-        {
-            f[currentObject] = (float)ev.NewValue / 150;
-            //for (var i = 0; i < transforms.Count; i++)
-                if(f[currentObject] > n[currentObject])
-                    transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
-            DrawObject();
-        }
-
-        private void rbObject1_CheckedChanged(object sender, EventArgs e)
-        {
-            if(_loadedObject.Count > ((RadioButton)sender).Name.Last() - '0' - 1)
-                currentObject = ((RadioButton)sender).Name.Last() - '0' - 1;
         }
     }
 }
