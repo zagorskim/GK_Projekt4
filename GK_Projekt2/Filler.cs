@@ -77,19 +77,15 @@ namespace GK_Projekt2
             //double p1;
             //double p2;
             //double p3;
-            var p1 = obj.VertexList[face.VertexIndexList[0] - 1];
-            var p2 = obj.VertexList[face.VertexIndexList[1] - 1];
-            var p3 = obj.VertexList[face.VertexIndexList[2] - 1];
+            var p1 = ScaledVertexOrder[face.VertexIndexList[0] - 1];
+            var p2 = ScaledVertexOrder[face.VertexIndexList[1] - 1];
+            var p3 = ScaledVertexOrder[face.VertexIndexList[2] - 1];
             for (i = 0; i < Height; i++)
             {
+                // Baricentric ratios doesn't sum up to 1, why???
                 for (j = 0; j < EdgeTable[i].count; j++)
                     {
-                    (var r1, var r2, var r3) = CalculateBaricentricRatio((i, j), ((int)p1.X, (int)p1.Y, (int)p1.Z), ((int)p2.X, (int)p2.Y, (int)p2.Z), ((int)p3.X, (int)p3.Y, (int)p3.Z));
-                        if (( r1 * p1.Z + r2 * p2.Z + r3 * p3.Z) > ZBuffer[i, j])
-                            continue;
-                        ZBuffer[i, j] = r1 * p1.Z + r2 * p2.Z + r3 * p3.Z;
-
-                        ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].ymax = EdgeTable[i].buckets[j].ymax;
+                    ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].ymax = EdgeTable[i].buckets[j].ymax;
                         ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].xofymin = EdgeTable[i].buckets[j].xofymin;
                         ActiveEdgeTuple.buckets[ActiveEdgeTuple.count].slopeinverse = EdgeTable[i].buckets[j].slopeinverse;
                         InsertSort(ActiveEdgeTuple);
@@ -154,7 +150,13 @@ namespace GK_Projekt2
                         {
                             for (int x = x1; x <= x2; x++)
                             {
-                                bitmap.SetPixel(x, i, CalculateColor(x, i, face));
+                                (var r1, var r2, var r3) = CalculateBaricentricRatio((x, i), p1, p2, p3);
+                                if ((r1 * p1.Item3 + r2 * p2.Item3 + r3 * p3.Item3) <= ZBuffer[x, i])
+                                {
+                                    ZBuffer[x, i] = r1 * p1.Item3 + r2 * p2.Item3 + r3 * p3.Item3;
+                                    bitmap.SetPixel(x, i, CalculateColor(x, i, face));
+                                }
+
                             }
                         }
                         }
@@ -369,10 +371,10 @@ namespace GK_Projekt2
 
         private (double, double, double) CalculateBaricentricRatio((int, int) x, (int, int, int) a, (int, int, int) b, (int, int, int) c)
         {
-            double field = a.Item1 * (b.Item2 - c.Item2) + b.Item1 * (c.Item2 - a.Item2) + c.Item1 * (a.Item2 - b.Item2);
-            double field1 = x.Item1 * (b.Item2 - c.Item2) + b.Item1 * (c.Item2 - x.Item2) + c.Item1 * (x.Item2 - b.Item2);
-            double field2 = a.Item1 * (x.Item2 - c.Item2) + x.Item1 * (c.Item2 - a.Item2) + c.Item1 * (a.Item2 - x.Item2);
-            double field3 = a.Item1 * (b.Item2 - x.Item2) + b.Item1 * (x.Item2 - a.Item2) + x.Item1 * (a.Item2 - b.Item2);
+            double field = Math.Abs(a.Item1 * (b.Item2 - c.Item2) + b.Item1 * (c.Item2 - a.Item2) + c.Item1 * (a.Item2 - b.Item2));
+            double field1 = Math.Abs(x.Item1 * (b.Item2 - c.Item2) + b.Item1 * (c.Item2 - x.Item2) + c.Item1 * (x.Item2 - b.Item2));
+            double field2 = Math.Abs(a.Item1 * (x.Item2 - c.Item2) + x.Item1 * (c.Item2 - a.Item2) + c.Item1 * (a.Item2 - x.Item2));
+            double field3 = Math.Abs(a.Item1 * (b.Item2 - x.Item2) + b.Item1 * (x.Item2 - a.Item2) + x.Item1 * (a.Item2 - b.Item2));
             return (field == 0 ? 0 : (field1 / field), field == 0 ? 0 : (field2 / field), field == 0 ? 0 : (field3 / field));
         }
 
