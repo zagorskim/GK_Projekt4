@@ -31,7 +31,7 @@ namespace ObjParser
         /// Load .obj from a stream.
         /// </summary>
         /// <param name="file"></param>
-	    public void LoadMtl(Stream data)
+        public void LoadMtl(Stream data)
         {
             using (var reader = new StreamReader(data))
             {
@@ -43,7 +43,7 @@ namespace ObjParser
         /// Load .mtl from a list of strings.
         /// </summary>
         /// <param name="data"></param>
-	    public void LoadMtl(IEnumerable<string> data)
+        public void LoadMtl(IEnumerable<string> data)
         {
             foreach (var line in data)
             {
@@ -79,14 +79,15 @@ namespace ObjParser
 
         private Material currentMaterial()
         {
-            if (MaterialList.Count > 0) return MaterialList.Last();
+            if (MaterialList.Count > 0)
+                return MaterialList.Last();
             return new Material();
         }
 
         /// <summary>
         /// Parses and loads a line from an OBJ file.
         /// Currently only supports V, VT, F and MTLLIB prefixes
-        /// </summary>		
+        /// </summary>
         private void processLine(string line)
         {
             string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -137,6 +138,5 @@ namespace ObjParser
                 }
             }
         }
-
     }
 }

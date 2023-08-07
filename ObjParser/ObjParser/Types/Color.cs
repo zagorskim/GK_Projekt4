@@ -23,7 +23,8 @@ namespace ObjParser.Types
 
         public void LoadFromStringArray(string[] data)
         {
-            if (data.Length != 4) return;
+            if (data.Length != 4)
+                return;
             r = float.Parse(data[1]);
             g = float.Parse(data[2]);
             b = float.Parse(data[3]);

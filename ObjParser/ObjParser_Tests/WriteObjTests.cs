@@ -20,7 +20,8 @@ namespace ObjParser_Tests
 
         #region Obj
         [Test]
-        public void Obj_WriteObj_TwoMaterials() {
+        public void Obj_WriteObj_TwoMaterials()
+        {
             string tempfilepath = Path.GetTempFileName();
             string[] headers = new string[] { "ObjParser" };
 
@@ -60,7 +61,8 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void Obj_WriteObj_NoMaterials() {
+        public void Obj_WriteObj_NoMaterials()
+        {
             string tempfilepath = Path.GetTempFileName();
             string[] headers = new string[] { "ObjParser" };
 
@@ -94,7 +96,8 @@ namespace ObjParser_Tests
 
         #region Mtl
         [Test]
-        public void Mtl_WriteMtl_TwoMaterials() {
+        public void Mtl_WriteMtl_TwoMaterials()
+        {
             string tempfilepath = Path.GetTempFileName();
             string[] headers = new string[] { "ObjParser" };
 

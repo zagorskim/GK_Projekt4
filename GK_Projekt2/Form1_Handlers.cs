@@ -86,8 +86,11 @@ namespace GK_Projekt2
                     {
                         for (var i = 0; i < dialog.FileNames.Length; i++)
                         {
-                                _texture[i] = new Bitmap(Image.FromFile(dialog.FileNames[i]));
-                                _filler[i]._texture = new Bitmap(_texture[i], new Size(_bitmap[i].Width, _bitmap[i].Height));
+                            _texture[i] = new Bitmap(Image.FromFile(dialog.FileNames[i]));
+                            _filler[i]._texture = new Bitmap(
+                                _texture[i],
+                                new Size(_bitmap[i].Width, _bitmap[i].Height)
+                            );
                         }
                     }
                     DrawObject();
@@ -102,12 +105,20 @@ namespace GK_Projekt2
             {
                 _filler[i].textureColor = rbTextureObjectColor.Checked;
                 _filler[i].normalVectorModified = cbModifiedNormalVector.Checked;
-                _filler[i].light = (sbLightX.Value * pbCanvas.Height / 100, sbLightY.Value * pbCanvas.Height / 100, (int)(sbLightZ.Value * pbCanvas.Height * 1.5 / 100));
+                _filler[i].light = (
+                    sbLightX.Value * pbCanvas.Height / 100,
+                    sbLightY.Value * pbCanvas.Height / 100,
+                    (int)(sbLightZ.Value * pbCanvas.Height * 1.5 / 100)
+                );
                 _filler[i].ks = (double)(sbKs.Value / 100m);
                 _filler[i].kd = (double)(sbKd.Value / 100m);
                 _filler[i].m = sbm.Value;
                 _filler[i].Il = (sbLightR.Value / 100, sbLightG.Value / 100, sbLightB.Value / 100);
-                _filler[i].Io = (sbObjectR.Value / 100, sbObjectG.Value / 100, sbObjectB.Value / 100);
+                _filler[i].Io = (
+                    sbObjectR.Value / 100,
+                    sbObjectG.Value / 100,
+                    sbObjectB.Value / 100
+                );
             }
         }
 
@@ -161,17 +172,23 @@ namespace GK_Projekt2
         {
             for (var i = 0; i < _bitmap.Count; i++)
             {
-                _filler[i].light.Item1 = (int)(_bitmap[i].Height * 3 * (double)((HScrollBar)sender).Value / 100 - pbCanvas.Height);
+                _filler[i].light.Item1 = (int)(
+                    _bitmap[i].Height * 3 * (double)((HScrollBar)sender).Value / 100
+                    - pbCanvas.Height
+                );
             }
-        if (!animationInProgress)
-            DrawObject();
+            if (!animationInProgress)
+                DrawObject();
         }
 
         private void sbLightY_Scroll(object sender, ScrollEventArgs e)
         {
             for (var i = 0; i < _bitmap.Count; i++)
             {
-                _filler[i].light.Item2 = (int)(_bitmap[i].Width * 3 * (double)((HScrollBar)sender).Value / 100 - pbCanvas.Height);
+                _filler[i].light.Item2 = (int)(
+                    _bitmap[i].Width * 3 * (double)((HScrollBar)sender).Value / 100
+                    - pbCanvas.Height
+                );
             }
             if (!animationInProgress)
                 DrawObject();
@@ -181,7 +198,10 @@ namespace GK_Projekt2
         {
             for (var i = 0; i < _bitmap.Count; i++)
             {
-                _filler[i].light.Item3 = (int)(_bitmap[i].Height / 2 + pbCanvas.Height * 2 * (double)((HScrollBar)sender).Value / 100);
+                _filler[i].light.Item3 = (int)(
+                    _bitmap[i].Height / 2
+                    + pbCanvas.Height * 2 * (double)((HScrollBar)sender).Value / 100
+                );
             }
             if (!animationInProgress)
                 DrawObject();
@@ -257,7 +277,10 @@ namespace GK_Projekt2
                         for (var i = 0; i < dialog.FileNames.Length; i++)
                         {
                             _normalMap[i] = new Bitmap(Image.FromFile(dialog.FileNames[i]));
-                            _filler[i]._normalMap = new Bitmap(_normalMap[i], new Size(_bitmap[i].Width, _bitmap[i].Height));
+                            _filler[i]._normalMap = new Bitmap(
+                                _normalMap[i],
+                                new Size(_bitmap[i].Width, _bitmap[i].Height)
+                            );
                         }
                         DrawObject();
                     }
@@ -303,7 +326,15 @@ namespace GK_Projekt2
         {
             cameraPosition[currentObject].X = (float)(e.NewValue - 50) / 10;
             //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
+            transforms[currentObject][3] = Matrix4x4.CreateLookAt(
+                new Vector3(
+                    cameraPosition[currentObject].X,
+                    cameraPosition[currentObject].Y,
+                    cameraPosition[currentObject].Z
+                ),
+                new Vector3(1, 1, 1),
+                new Vector3(0, 0, 1)
+            );
             DrawObject();
         }
 
@@ -311,7 +342,15 @@ namespace GK_Projekt2
         {
             cameraPosition[currentObject].Y = (float)(e.NewValue - 50) / 10;
             //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
+            transforms[currentObject][3] = Matrix4x4.CreateLookAt(
+                new Vector3(
+                    cameraPosition[currentObject].X,
+                    cameraPosition[currentObject].Y,
+                    cameraPosition[currentObject].Z
+                ),
+                new Vector3(1, 1, 1),
+                new Vector3(0, 0, 1)
+            );
             DrawObject();
         }
 
@@ -319,7 +358,15 @@ namespace GK_Projekt2
         {
             cameraPosition[currentObject].Z = (float)(e.NewValue - 50) / 10;
             //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][3] = Matrix4x4.CreateLookAt(new Vector3(cameraPosition[currentObject].X, cameraPosition[currentObject].Y, cameraPosition[currentObject].Z), new Vector3(1, 1, 1), new Vector3(0, 0, 1));
+            transforms[currentObject][3] = Matrix4x4.CreateLookAt(
+                new Vector3(
+                    cameraPosition[currentObject].X,
+                    cameraPosition[currentObject].Y,
+                    cameraPosition[currentObject].Z
+                ),
+                new Vector3(1, 1, 1),
+                new Vector3(0, 0, 1)
+            );
             DrawObject();
         }
 
@@ -327,7 +374,12 @@ namespace GK_Projekt2
         {
             e[currentObject] = (float)ev.NewValue / 50;
             //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
+            transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(
+                e[currentObject],
+                a[currentObject],
+                n[currentObject],
+                f[currentObject]
+            );
             DrawObject();
         }
 
@@ -335,7 +387,12 @@ namespace GK_Projekt2
         {
             a[currentObject] = (float)ev.NewValue / 50;
             //for (var i = 0; i < transforms.Count; i++)
-            transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
+            transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(
+                e[currentObject],
+                a[currentObject],
+                n[currentObject],
+                f[currentObject]
+            );
             DrawObject();
         }
 
@@ -344,7 +401,12 @@ namespace GK_Projekt2
             n[currentObject] = (float)ev.NewValue / 300;
             //for (var i = 0; i < transforms.Count; i++)
             if (n[currentObject] < f[currentObject])
-                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
+                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(
+                    e[currentObject],
+                    a[currentObject],
+                    n[currentObject],
+                    f[currentObject]
+                );
             DrawObject();
         }
 
@@ -353,7 +415,12 @@ namespace GK_Projekt2
             f[currentObject] = (float)ev.NewValue / 150;
             //for (var i = 0; i < transforms.Count; i++)
             if (f[currentObject] > n[currentObject])
-                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]);
+                transforms[currentObject][4] = Matrix4x4.CreatePerspectiveFieldOfView(
+                    e[currentObject],
+                    a[currentObject],
+                    n[currentObject],
+                    f[currentObject]
+                );
             DrawObject();
         }
 

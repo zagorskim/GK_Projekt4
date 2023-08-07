@@ -35,9 +35,7 @@ namespace ObjParser.Types
             this.IlluminationModel = 0;
         }
 
-        public void LoadFromStringArray(string[] data)
-        {
-        }
+        public void LoadFromStringArray(string[] data) { }
 
         public override string ToString()
         {

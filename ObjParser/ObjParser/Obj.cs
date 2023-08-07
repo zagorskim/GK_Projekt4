@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using ObjParser.Types;
 
 namespace ObjParser
@@ -12,7 +13,7 @@ namespace ObjParser
         public List<Face> FaceList;
         public List<TextureVertex> TextureList;
         public List<NormalVector> NVList;
-
+        public List<(int, int)> NormalsVertices;
         public Extent Size { get; set; }
 
         public string UseMtl { get; set; }
@@ -21,12 +22,13 @@ namespace ObjParser
         /// <summary>
         /// Constructor. Initializes VertexList, FaceList and TextureList.
         /// </summary>
-	    public Obj()
+        public Obj()
         {
             VertexList = new List<Vertex>();
             FaceList = new List<Face>();
             TextureList = new List<TextureVertex>();
             NVList = new List<NormalVector>();
+            NormalsVertices = new List<(int, int)>();
         }
 
         /// <summary>
@@ -42,25 +44,32 @@ namespace ObjParser
         /// Load .obj from a stream.
         /// </summary>
         /// <param name="file"></param>
-	    public void LoadObj(Stream data)
+        public void LoadObj(Stream data)
         {
             using (var reader = new StreamReader(data))
             {
                 LoadObj(reader.ReadToEnd().Split(Environment.NewLine.ToCharArray()));
             }
+            //var maxVertex = VertexList.Max((x) => Math.Max(x.X, Math.Max(x.Y, x.Z)));
+            //foreach (var v in VertexList)
+            //{
+            //    v.X = v.X / maxVertex;
+            //    v.Y = v.Y / maxVertex;
+            //    v.Z= v.Z / maxVertex;
+            //}
         }
 
         /// <summary>
         /// Load .obj from a list of strings.
         /// </summary>
         /// <param name="data"></param>
-	    public void LoadObj(IEnumerable<string> data)
+        public void LoadObj(IEnumerable<string> data)
         {
             foreach (var line in data)
             {
                 processLine(line);
             }
-
+            NormalsVertices.Sort((x, y) => x.Item1 >= y.Item1 ? 1 : -1);
             updateSize();
         }
 
@@ -142,7 +151,7 @@ namespace ObjParser
         /// <summary>
         /// Parses and loads a line from an OBJ file.
         /// Currently only supports V, VT, F and MTLLIB prefixes
-        /// </summary>		
+        /// </summary>
         private void processLine(string line)
         {
             string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -168,6 +177,8 @@ namespace ObjParser
                         f.LoadFromStringArray(parts);
                         f.UseMtl = UseMtl;
                         FaceList.Add(f);
+                        for (int i = 0; i < f.VertexIndexList.Length; i++)
+                            NormalsVertices.Add((f.VertexIndexList[i], f.NVIndexList[i]));
                         break;
                     case "vt":
                         TextureVertex vt = new TextureVertex();
@@ -181,10 +192,8 @@ namespace ObjParser
                         NVList.Add(vn);
                         vn.Index = TextureList.Count();
                         break;
-
                 }
             }
         }
-
     }
 }

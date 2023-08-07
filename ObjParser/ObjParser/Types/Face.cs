@@ -21,10 +21,13 @@ namespace ObjParser.Types
         public void LoadFromStringArray(string[] data)
         {
             if (data.Length < MinimumDataLength)
-                throw new ArgumentException("Input array must be of minimum length " + MinimumDataLength, "data");
+                throw new ArgumentException(
+                    "Input array must be of minimum length " + MinimumDataLength,
+                    "data"
+                );
 
             if (!data[0].ToLower().Equals(Prefix))
-                throw new ArgumentException("Data prefix must be '" + Prefix + "'", "data");            
+                throw new ArgumentException("Data prefix must be '" + Prefix + "'", "data");
 
             int vcount = data.Count() - 1;
             VertexIndexList = new int[vcount];
@@ -38,21 +41,38 @@ namespace ObjParser.Types
                 string[] parts = data[i + 1].Split('/');
 
                 int vindex;
-                success = int.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out vindex);
-                if (!success) throw new ArgumentException("Could not parse parameter as int");
+                success = int.TryParse(
+                    parts[0],
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out vindex
+                );
+                if (!success)
+                    throw new ArgumentException("Could not parse parameter as int");
                 VertexIndexList[i] = vindex;
 
                 if (parts.Count() > 1)
                 {
-                    success = int.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out vindex);
-                    if (success) {
+                    success = int.TryParse(
+                        parts[1],
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out vindex
+                    );
+                    if (success)
+                    {
                         TextureVertexIndexList[i] = vindex;
                     }
                 }
 
                 if (parts.Count() > 2)
                 {
-                    success = int.TryParse(parts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out vindex);
+                    success = int.TryParse(
+                        parts[2],
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out vindex
+                    );
                     if (success)
                     {
                         NVIndexList[i] = vindex;

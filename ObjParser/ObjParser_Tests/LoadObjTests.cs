@@ -22,10 +22,7 @@ namespace ObjParser_Tests
         public void LoadObj_OneVert_OneVertCount()
         {
             // Arrange
-            var objFile = new[]
-            {
-                "v 0.0 0.0 0.0"
-            };
+            var objFile = new[] { "v 0.0 0.0 0.0" };
 
             // Act
             obj.LoadObj(objFile);
@@ -38,11 +35,7 @@ namespace ObjParser_Tests
         public void LoadOBj_TwoVerts_TwoVertCount()
         {
             // Arrange
-            var objFile = new[]
-            {
-                "v 0.0 0.0 0.0",
-                "v 1.0 1.0 1.0"
-            };
+            var objFile = new[] { "v 0.0 0.0 0.0", "v 1.0 1.0 1.0" };
 
             // Act
             obj.LoadObj(objFile);
@@ -55,7 +48,7 @@ namespace ObjParser_Tests
         public void LoadObj_EmptyObj_EmptyObjNoVertsNoFaces()
         {
             // Arrange
-            var objFile = new string[] {};
+            var objFile = new string[] { };
 
             // Act
             obj.LoadObj(objFile);
@@ -69,11 +62,7 @@ namespace ObjParser_Tests
         public void LoadObj_NoVertPositions_ThrowsArgumentException()
         {
             // Arrange
-            var objFile = new[]
-            {
-                "v 0.0 0.0 0.0",
-                "v"
-            };
+            var objFile = new[] { "v 0.0 0.0 0.0", "v" };
 
             // Act
 
@@ -89,7 +78,6 @@ namespace ObjParser_Tests
             {
                 // Valid
                 "v 0, 0, 0,",
-
                 // Invalid
                 "v 0.1, 0.1, 0.2,",
                 "v 0.1, 0.1, 0.3,",
@@ -106,10 +94,7 @@ namespace ObjParser_Tests
         public void LoadObj_LettersInsteadOfPositions_ThrowsArgumentException()
         {
             // Arrange
-            var objFile = new[]
-            {
-                "v a b c"
-            };
+            var objFile = new[] { "v a b c" };
 
             // Act
 
@@ -120,12 +105,10 @@ namespace ObjParser_Tests
 
         #region TextureVertex
         [Test]
-        public void LoadObj_OneTextureVert_OneTextureVertCount() {
+        public void LoadObj_OneTextureVert_OneTextureVertCount()
+        {
             // Arrange
-            var objFile = new[]
-            {
-                "vt 0.0 0.0"
-            };
+            var objFile = new[] { "vt 0.0 0.0" };
 
             // Act
             obj.LoadObj(objFile);
@@ -135,13 +118,10 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void LoadOBj_TwoTextureVerts_TwoTextureVertCount() {
+        public void LoadOBj_TwoTextureVerts_TwoTextureVertCount()
+        {
             // Arrange
-            var objFile = new[]
-            {
-                "vt 0.0 0.0",
-                "vt 1.0 1.0"
-            };
+            var objFile = new[] { "vt 0.0 0.0", "vt 1.0 1.0" };
 
             // Act
             obj.LoadObj(objFile);
@@ -151,13 +131,10 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void LoadOBj_TwoTextureVerts_TwoTextureVertValues() {
+        public void LoadOBj_TwoTextureVerts_TwoTextureVertValues()
+        {
             // Arrange
-            var objFile = new[]
-            {
-                "vt 5.0711 0.0003",
-                "vt 5.4612 1.0000"
-            };
+            var objFile = new[] { "vt 5.0711 0.0003", "vt 5.4612 1.0000" };
 
             // Act
             obj.LoadObj(objFile);
@@ -173,7 +150,8 @@ namespace ObjParser_Tests
 
         #region Mtl
         [Test]
-        public void Mtl_LoadMtl_TwoMaterials() {
+        public void Mtl_LoadMtl_TwoMaterials()
+        {
             // Arrange
             var mtlFile = new[]
             {
@@ -256,7 +234,8 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void LoadObj_FourVertsThreeFace_TwoMaterialsCount() {
+        public void LoadObj_FourVertsThreeFace_TwoMaterialsCount()
+        {
             // Arrange
             var objFile = new[]
             {
@@ -283,7 +262,8 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void LoadObj_FourVertsTwoFace_OneMaterialCount() {
+        public void LoadObj_FourVertsTwoFace_OneMaterialCount()
+        {
             // Arrange
             var objFile = new[]
             {
@@ -307,7 +287,8 @@ namespace ObjParser_Tests
         }
 
         [Test]
-        public void LoadObj_FourVertsSingleFaceNoTextureVerts_FourVertsOneFaceCount() {
+        public void LoadObj_FourVertsSingleFaceNoTextureVerts_FourVertsOneFaceCount()
+        {
             // Arrange
             var objFile = new[]
             {

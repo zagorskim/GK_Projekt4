@@ -12,7 +12,8 @@ using System.Numerics;
 using System;
 using System.Runtime.InteropServices;
 using System.Reflection;
-// èrÛd≥o úwiat≥a
+
+// ÔøΩrÔøΩdÔøΩo ÔøΩwiatÔøΩa
 namespace GK_Projekt2
 {
     // Parsing *.obj files (ObjParser) taken from some open source implementation (https://github.com/stefangordon/ObjParser.git)
@@ -86,30 +87,94 @@ namespace GK_Projekt2
                 transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                 transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                 transforms[i].Add(Matrix4x4.CreateRotationY((float)0));
-                transforms[i].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[i].X, cameraPosition[i].Y, cameraPosition[currentObject].Z), new Vector3(0, 0, 0), new Vector3(5, 5, 5)));
-                transforms[i].Add(Matrix4x4.CreatePerspectiveFieldOfView(e[currentObject], a[currentObject], n[currentObject], f[currentObject]));
+                transforms[i].Add(
+                    Matrix4x4.CreateLookAt(
+                        new Vector3(
+                            cameraPosition[i].X,
+                            cameraPosition[i].Y,
+                            cameraPosition[currentObject].Z
+                        ),
+                        new Vector3(0, 0, 0),
+                        new Vector3(5, 5, 5)
+                    )
+                );
+                transforms[i].Add(
+                    Matrix4x4.CreatePerspectiveFieldOfView(
+                        e[currentObject],
+                        a[currentObject],
+                        n[currentObject],
+                        f[currentObject]
+                    )
+                );
                 _bitmap.Add(new Bitmap(pbCanvas.Width + 2, pbCanvas.Height + 2));
                 _fastBitmap.Add(new FastBitmap(_bitmap[i]));
-                var temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/pexels-anni-roenkae-2832432.jpg"));
+                var temp = new Bitmap(
+                    Image.FromFile(
+                        AppDomain.CurrentDomain.BaseDirectory
+                            + @"/Resources/pexels-anni-roenkae-2832432.jpg"
+                    )
+                );
                 _texture.Add(new Bitmap(temp, new Size(_bitmap[i].Width, _bitmap[i].Height)));
-                temp = new Bitmap(Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/Water on camera lense effect.png"));
+                temp = new Bitmap(
+                    Image.FromFile(
+                        AppDomain.CurrentDomain.BaseDirectory
+                            + @"/Resources/Water on camera lense effect.png"
+                    )
+                );
                 _normalMap.Add(new Bitmap(temp, new Size(_bitmap[i].Width, _bitmap[i].Height)));
                 if (i == 0)
                 {
-                    _loadedObject.Add(ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/kryszta≥ dowoz 24H bielany mokotÛw.obj"));
-                    _modelObject.Add(ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/kryszta≥ dowoz 24H bielany mokotÛw.obj"));
+                    _loadedObject.Add(
+                        ReadObjFile(
+                            AppDomain.CurrentDomain.BaseDirectory
+                                + @"/Resources/krysztaÔøΩ dowoz 24H bielany mokotÔøΩw.obj"
+                        )
+                    );
+                    _modelObject.Add(
+                        ReadObjFile(
+                            AppDomain.CurrentDomain.BaseDirectory
+                                + @"/Resources/krysztaÔøΩ dowoz 24H bielany mokotÔøΩw.obj"
+                        )
+                    );
                 }
                 else
                 {
-                    _loadedObject.Add(ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/coneAVG.obj"));
-                    _modelObject.Add(ReadObjFile(AppDomain.CurrentDomain.BaseDirectory + @"/Resources/coneAVG.obj"));
+                    _loadedObject.Add(
+                        ReadObjFile(
+                            AppDomain.CurrentDomain.BaseDirectory + @"/Resources/coneAVG.obj"
+                        )
+                    );
+                    _modelObject.Add(
+                        ReadObjFile(
+                            AppDomain.CurrentDomain.BaseDirectory + @"/Resources/coneAVG.obj"
+                        )
+                    );
                 }
                 ScaledEdgeList.Add(new List<((int, int, int), (int, int, int))>());
                 ScaledVertexList.Add(new List<(int, int, int, Face)>());
                 ScaledVertexOrder.Add(new (int, int, int)[_modelObject[i].TextureList.Count]);
-                (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_loadedObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
-            sbLightZ.Value = sbLightZ.Maximum / 2;
-                _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[i], _normalMap[i], isHeightMapEnabled, _bitmap[i], ZBuffer));
+                (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(
+                    _loadedObject[i].FaceList,
+                    pbCanvas.Width,
+                    pbCanvas.Height,
+                    i
+                );
+                sbLightZ.Value = sbLightZ.Maximum / 2;
+                _filler.Add(
+                    new Filler(
+                        _modelObject[i],
+                        pbCanvas.Height,
+                        pbCanvas.Width,
+                        polySize,
+                        ScaledVertexList[i],
+                        ScaledVertexOrder[i],
+                        _texture[i],
+                        _normalMap[i],
+                        isHeightMapEnabled,
+                        _bitmap[i],
+                        ZBuffer
+                    )
+                );
             }
             DrawObject();
             animationMutex = new System.Threading.Mutex();
@@ -151,8 +216,8 @@ namespace GK_Projekt2
                         transforms.Clear();
                         rotationX = new float[dialog.FileNames.Length];
                         rotationY = new float[dialog.FileNames.Length];
-                        rotationZ= new float[dialog.FileNames.Length];
-                        e= new float[dialog.FileNames.Length];
+                        rotationZ = new float[dialog.FileNames.Length];
+                        e = new float[dialog.FileNames.Length];
                         Array.Fill(e, (float)1);
                         a = new float[dialog.FileNames.Length];
                         Array.Fill(a, (float)1);
@@ -166,21 +231,54 @@ namespace GK_Projekt2
                         {
                             _modelObject.Add(ReadObjFile(dialog.FileNames[i]));
                             _loadedObject.Add(ReadObjFile(dialog.FileNames[i]));
-                            ScaledVertexOrder.Add(new (int, int, int)[_modelObject[i].TextureList.Count]);
+                            ScaledVertexOrder.Add(
+                                new (int, int, int)[_modelObject[i].TextureList.Count]
+                            );
                             ScaledEdgeList.Add(null);
                             ScaledVertexList.Add(null);
                             transforms.Add(new List<Matrix4x4>());
                             transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                             transforms[i].Add(Matrix4x4.CreateRotationX((float)0));
                             transforms[i].Add(Matrix4x4.CreateRotationY((float)0));
-                            transforms[i].Add(Matrix4x4.CreateLookAt(new Vector3(cameraPosition[i].X, cameraPosition[i].Y, cameraPosition[i].Z), new Vector3(0, 0, 0), new Vector3(5, 5, 5)));
-                            transforms[i].Add(Matrix4x4.CreatePerspectiveFieldOfView(e[i], a[i], n[i], f[i]));
+                            transforms[i].Add(
+                                Matrix4x4.CreateLookAt(
+                                    new Vector3(
+                                        cameraPosition[i].X,
+                                        cameraPosition[i].Y,
+                                        cameraPosition[i].Z
+                                    ),
+                                    new Vector3(0, 0, 0),
+                                    new Vector3(5, 5, 5)
+                                )
+                            );
+                            transforms[i].Add(
+                                Matrix4x4.CreatePerspectiveFieldOfView(e[i], a[i], n[i], f[i])
+                            );
                             // Temporary bitmap assigning
                             _bitmap.Add(tempBitmap);
 
-                            (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) = ScaleVertices(_modelObject[i].FaceList, pbCanvas.Width, pbCanvas.Height, i);
-                            _filler.Add(new Filler(_modelObject[i], pbCanvas.Height, pbCanvas.Width, polySize, ScaledVertexList[i], ScaledVertexOrder[i], _texture[0], _normalMap[0], isHeightMapEnabled, _bitmap[i], ZBuffer));
-
+                            (ScaledEdgeList[i], ScaledVertexList[i], ScaledVertexOrder[i]) =
+                                ScaleVertices(
+                                    _modelObject[i].FaceList,
+                                    pbCanvas.Width,
+                                    pbCanvas.Height,
+                                    i
+                                );
+                            _filler.Add(
+                                new Filler(
+                                    _modelObject[i],
+                                    pbCanvas.Height,
+                                    pbCanvas.Width,
+                                    polySize,
+                                    ScaledVertexList[i],
+                                    ScaledVertexOrder[i],
+                                    _texture[0],
+                                    _normalMap[0],
+                                    isHeightMapEnabled,
+                                    _bitmap[i],
+                                    ZBuffer
+                                )
+                            );
                         }
                         SetFillerValues();
                         if (!animationInProgress)
@@ -194,18 +292,20 @@ namespace GK_Projekt2
         // Asynchronous drawing provides better UI behaviour, but sometimes doesn't complete calculations, disabling async drawing will fix it
         public async void DrawObject()
         {
-                if (!_fastBitmap[0].Locked)
-                {
-                    using (var graphics = Graphics.FromImage(_bitmap[0]))
-                        graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height));
-                    for (int i = 0; i < ZBuffer.GetLength(0); i++)
-                        for (int j = 0; j < ZBuffer.GetLength(1); j++)
-                            ZBuffer[i, j] = double.MaxValue;
+            if (!_fastBitmap[0].Locked)
+            {
+                using (var graphics = Graphics.FromImage(_bitmap[0]))
+                    graphics.FillRectangle(
+                        Brushes.White,
+                        new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height)
+                    );
+                for (int i = 0; i < ZBuffer.GetLength(0); i++)
+                    for (int j = 0; j < ZBuffer.GetLength(1); j++)
+                        ZBuffer[i, j] = double.MaxValue;
                 for (var i = 0; i < _loadedObject.Count; i++)
-                    {
-                            // Transform
-                            TransformMesh(i);
-
+                {
+                    // Transform
+                    TransformMesh(i);
 
                     // Filling and shading
                     _fastBitmap[0].Lock();
@@ -216,50 +316,65 @@ namespace GK_Projekt2
 
                     //Drawing mesh
                     if (cbMesh.Checked)
-                                DrawLines(_bitmap[0], System.Drawing.Color.Black, 1, i);
+                        DrawLines(_bitmap[0], System.Drawing.Color.Black, 1, i);
 
-                            pbCanvas.Image = _bitmap[0].Clone(new Rectangle(0, 0, _bitmap[0].Width, _bitmap[i].Height), System.Drawing.Imaging.PixelFormat.DontCare);
-                        }
+                    pbCanvas.Image = _bitmap[0].Clone(
+                        new Rectangle(0, 0, _bitmap[0].Width, _bitmap[i].Height),
+                        System.Drawing.Imaging.PixelFormat.DontCare
+                    );
+                }
             }
         }
 
         public void DrawObjectAnimation()
         {
-                if (!_fastBitmap[0].Locked)
-                {
-                    using (var graphics = Graphics.FromImage(_bitmap[0]))
-                        graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height));
-                    for (int i = 0; i < ZBuffer.GetLength(0); i++)
-                        for (int j = 0; j < ZBuffer.GetLength(1); j++)
-                            ZBuffer[i, j] = double.MaxValue;
+            if (!_fastBitmap[0].Locked)
+            {
+                using (var graphics = Graphics.FromImage(_bitmap[0]))
+                    graphics.FillRectangle(
+                        Brushes.White,
+                        new Rectangle(0, 0, _bitmap[0].Width, _bitmap[0].Height)
+                    );
+                for (int i = 0; i < ZBuffer.GetLength(0); i++)
+                    for (int j = 0; j < ZBuffer.GetLength(1); j++)
+                        ZBuffer[i, j] = double.MaxValue;
                 for (var i = 0; i < _loadedObject.Count; i++)
-                    {
-                            // Lab comment
-                            //_fastBitmap[i].Lock();
-                            //FillMesh(_fastBitmap[i], i);
-                            //_fastBitmap[i].Unlock();
+                {
+                    // Lab comment
+                    //_fastBitmap[i].Lock();
+                    //FillMesh(_fastBitmap[i], i);
+                    //_fastBitmap[i].Unlock();
 
-                            TransformMesh(i);
+                    TransformMesh(i);
 
-                            if (cbMesh.Checked)
-                                DrawLines(_bitmap[0], System.Drawing.Color.Black, 1, i);
+                    if (cbMesh.Checked)
+                        DrawLines(_bitmap[0], System.Drawing.Color.Black, 1, i);
 
-                            pbCanvas.Image = _bitmap[0].Clone(new Rectangle(0, 0, _bitmap[i].Width, _bitmap[0].Height), System.Drawing.Imaging.PixelFormat.DontCare);
-                        }
-                    }
+                    pbCanvas.Image = _bitmap[0].Clone(
+                        new Rectangle(0, 0, _bitmap[i].Width, _bitmap[0].Height),
+                        System.Drawing.Imaging.PixelFormat.DontCare
+                    );
+                }
+            }
         }
 
         public void DrawLines(Bitmap newBitmap, System.Drawing.Color color, int size, int index)
         {
-                using (var graphics = Graphics.FromImage(newBitmap))
+            using (var graphics = Graphics.FromImage(newBitmap))
+            {
+                Pen pen = new Pen(color, size);
+                foreach (var i in ScaledEdgeList[index])
                 {
-                    Pen pen = new Pen(color, size);
-                    foreach (var i in ScaledEdgeList[index])
-                    {
-                        graphics.DrawLine(pen, i.Item1.Item1, i.Item1.Item2, i.Item2.Item1, i.Item2.Item2);
-                    }
-                    pen.Dispose();
+                    graphics.DrawLine(
+                        pen,
+                        i.Item1.Item1,
+                        i.Item1.Item2,
+                        i.Item2.Item1,
+                        i.Item2.Item2
+                    );
                 }
+                pen.Dispose();
+            }
         }
 
         public void FillMesh(FastBitmap bitmap, int index)
@@ -267,7 +382,10 @@ namespace GK_Projekt2
             var temp = new (int, int)[polySize];
             for (var i = 0; i < ScaledVertexList[index].Count; i++)
             {
-                temp[i % polySize] = (ScaledVertexList[index][i].Item1, ScaledVertexList[index][i].Item2);
+                temp[i % polySize] = (
+                    ScaledVertexList[index][i].Item1,
+                    ScaledVertexList[index][i].Item2
+                );
                 if (i % polySize == 2)
                 {
                     _filler[index].FillPoly(bitmap, temp, ScaledVertexList[index][i].Item4);
@@ -277,10 +395,18 @@ namespace GK_Projekt2
 
         public (int, int, int) ScaleToCurrentSize(double x, double y, double z, Bitmap bitmap)
         {
-            return ((int)((x * 0.99 + 1) * bitmap.Height / 2), (int)((y * 0.99 + 1) * bitmap.Height / 2), (int)((z * 0.99 + 1) * bitmap.Height / 2));
+            return (
+                (int)((x * 0.99 + 1) * bitmap.Height / 2),
+                (int)((y * 0.99 + 1) * bitmap.Height / 2),
+                (int)((z * 0.99 + 1) * bitmap.Height / 2)
+            );
         }
 
-        public (List<((int, int, int), (int, int, int))>, List<(int, int, int, Face)>, (int, int, int)[]) ScaleVertices(List<Face> faces, int width, int height, int index)
+        public (
+            List<((int, int, int), (int, int, int))>,
+            List<(int, int, int, Face)>,
+            (int, int, int)[]
+        ) ScaleVertices(List<Face> faces, int width, int height, int index)
         {
             var ret1 = new List<((int, int, int), (int, int, int))>();
             var ret2 = new List<(int, int, int, Face)>();
@@ -290,12 +416,18 @@ namespace GK_Projekt2
                 for (int j = 0; j < i.VertexIndexList.Length; j++)
                 {
                     // removing points outside of the screen
-                    if (_modelObject[index].VertexList.Count > i.VertexIndexList[j] - 1 && _modelObject[index].VertexList.Count > i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1)
+                    if (
+                        _modelObject[index].VertexList.Count > i.VertexIndexList[j] - 1
+                        && _modelObject[index].VertexList.Count
+                            > i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                    )
                     {
-                        if (_modelObject[index].VertexList[i.VertexIndexList[j] - 1].X < -1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[j] - 1].X > 1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Y < -1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Y > 1)
+                        if (
+                            _modelObject[index].VertexList[i.VertexIndexList[j] - 1].X < -1
+                            || _modelObject[index].VertexList[i.VertexIndexList[j] - 1].X > 1
+                            || _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Y < -1
+                            || _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Y > 1
+                        )
                         {
                             for (var k = 0; k < j; k++)
                             {
@@ -305,10 +437,20 @@ namespace GK_Projekt2
                             j = i.VertexIndexList.Length;
                             continue;
                         }
-                        if (_modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X < -1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X > 1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y < -1 ||
-                            _modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y > 1)
+                        if (
+                            _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].X < -1
+                            || _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].X > 1
+                            || _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].Y < -1
+                            || _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].Y > 1
+                        )
                         {
                             for (var k = 0; k < j; k++)
                             {
@@ -319,15 +461,28 @@ namespace GK_Projekt2
                             continue;
                         }
 
-                        var point1 = ScaleToCurrentSize(_modelObject[index].VertexList[i.VertexIndexList[j] - 1].X,
+                        var point1 = ScaleToCurrentSize(
+                            _modelObject[index].VertexList[i.VertexIndexList[j] - 1].X,
                             _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Y,
                             _modelObject[index].VertexList[i.VertexIndexList[j] - 1].Z,
-                            _bitmap[index]);
-                        var point2 = ScaleToCurrentSize(_modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].X,
-                            _modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Y,
-                            _modelObject[index].VertexList[i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1].Z,
-                            _bitmap[index]);
-                        var temp = ((point1.Item1, point1.Item2, point1.Item3), (point2.Item1, point2.Item2, point2.Item3));
+                            _bitmap[index]
+                        );
+                        var point2 = ScaleToCurrentSize(
+                            _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].X,
+                            _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].Y,
+                            _modelObject[index].VertexList[
+                                i.VertexIndexList[(j + 1) % i.VertexIndexList.Length] - 1
+                            ].Z,
+                            _bitmap[index]
+                        );
+                        var temp = (
+                            (point1.Item1, point1.Item2, point1.Item3),
+                            (point2.Item1, point2.Item2, point2.Item3)
+                        );
                         ret1.Add(temp);
                         ret2.Add((point1.Item1, point1.Item2, point1.Item3, i));
                     }
@@ -335,9 +490,14 @@ namespace GK_Projekt2
             }
             for (var i = 0; i < _modelObject[index].VertexList.Count; i++)
             {
-                var point = ScaleToCurrentSize(_modelObject[index].VertexList[i].X, _modelObject[index].VertexList[i].Y, _modelObject[index].VertexList[i].Z, _bitmap[index]);
+                var point = ScaleToCurrentSize(
+                    _modelObject[index].VertexList[i].X,
+                    _modelObject[index].VertexList[i].Y,
+                    _modelObject[index].VertexList[i].Z,
+                    _bitmap[index]
+                );
                 //if(point.Item1 >= 0 && point.Item1 < _bitmap[index].Width && point.Item2 >= 0 && point.Item2 < _bitmap[index].Height)
-                    ret3.Add(point);
+                ret3.Add(point);
             }
             //for(var i = 0; i < faces.Count; i++)
             //{
@@ -361,18 +521,40 @@ namespace GK_Projekt2
                 for (var j = 0; j < _bitmap.Count; j++)
                 {
                     int radius = pbCanvas.Width / 2;
-                    for (int i = 0; animationInProgress && i < 3 * pbCanvas.Width / 4; i += increment, radius -= increment / 3)
+                    for (
+                        int i = 0;
+                        animationInProgress && i < 3 * pbCanvas.Width / 4;
+                        i += increment, radius -= increment / 3
+                    )
                     {
                         _filler[j].light.Item1 = i;
-                        double y = middle.Item2 - Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                        double y =
+                            middle.Item2
+                            - Math.Sqrt(
+                                -Math.Pow(middle.Item1, 2)
+                                    + 2 * middle.Item1 * i
+                                    - Math.Pow(i, 2)
+                                    + (Math.Pow(radius, 2))
+                            );
                         _filler[j].light.Item2 = (int)y;
                         DrawObjectAnimation();
                         CalculateFrameRate();
                     }
-                    for (int i = (int)(3 * pbCanvas.Width / 4); animationInProgress && i > pbCanvas.Width / 4; i -= increment, radius -= increment / 3)
+                    for (
+                        int i = (int)(3 * pbCanvas.Width / 4);
+                        animationInProgress && i > pbCanvas.Width / 4;
+                        i -= increment, radius -= increment / 3
+                    )
                     {
                         _filler[j].light.Item1 = i;
-                        double y = middle.Item2 + Math.Sqrt(-Math.Pow(middle.Item1, 2) + 2 * middle.Item1 * i - Math.Pow(i, 2) + (Math.Pow(radius, 2)));
+                        double y =
+                            middle.Item2
+                            + Math.Sqrt(
+                                -Math.Pow(middle.Item1, 2)
+                                    + 2 * middle.Item1 * i
+                                    - Math.Pow(i, 2)
+                                    + (Math.Pow(radius, 2))
+                            );
                         _filler[j].light.Item2 = (int)y;
                         if (y < 10000)
                             DrawObjectAnimation();
@@ -402,46 +584,51 @@ namespace GK_Projekt2
 
         private void TransformMesh(int index)
         {
-                Vector4 point;
-                Vector4 normalVector;
+            Vector4 point;
+            Vector4 normalVector;
             _modelObject[index].VertexList.Clear();
-                for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
-                {
-                    // points transformations
-                    point = new Vector4((float)_loadedObject[index].VertexList[i].X, 
-                        (float)_loadedObject[index].VertexList[i].Y, 
-                        (float)_loadedObject[index].VertexList[i].Z, 
-                        (float)1);
+            for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
+            {
+                // points transformations
+                point = new Vector4(
+                    (float)_loadedObject[index].VertexList[i].X,
+                    (float)_loadedObject[index].VertexList[i].Y,
+                    (float)_loadedObject[index].VertexList[i].Z,
+                    (float)1
+                );
 
-                    foreach(var t in transforms[index])
-                        point = TransformVector(point, t);
+                foreach (var t in transforms[index])
+                    point = TransformVector(point, t);
 
-                    point.X /= point.W;
-                    point.Y /= point.W;
-                    point.Z /= point.W;
-                    var vertex = new Vertex();
-                    vertex.X = point.X;
-                    vertex.Y = point.Y;
-                    vertex.Z = point.Z;
-                    _modelObject[index].VertexList.Add(vertex);
+                point.X /= point.W;
+                point.Y /= point.W;
+                point.Z /= point.W;
+                var vertex = new Vertex();
+                vertex.X = point.X;
+                vertex.Y = point.Y;
+                vertex.Z = point.Z;
+                _modelObject[index].VertexList.Add(vertex);
 
                 // Normal vectors transformations
-                }
-                for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
-                {
-                    normalVector = new Vector4((float)_loadedObject[index].NVList[i].X, 
-                        (float)_loadedObject[index].NVList[i].Y, 
-                        (float)_loadedObject[index].NVList[i].Z, 0);
-                    foreach (var t in transforms[index])
-                        normalVector = TransformVector(normalVector, t);
+            }
+            for (var i = 0; i < _loadedObject[index].VertexList.Count; i++)
+            {
+                normalVector = new Vector4(
+                    (float)_loadedObject[index].NVList[i].X,
+                    (float)_loadedObject[index].NVList[i].Y,
+                    (float)_loadedObject[index].NVList[i].Z,
+                    0
+                );
+                foreach (var t in transforms[index])
+                    normalVector = TransformVector(normalVector, t);
 
-                    _modelObject[index].NVList[i] = new NormalVector();
-                    _modelObject[index].NVList[i].X = normalVector.X;
-                    _modelObject[index].NVList[i].X = normalVector.Y;
-                    _modelObject[index].NVList[i].X = normalVector.Z;
-                }
-                (ScaledEdgeList[index], ScaledVertexList[index], ScaledVertexOrder[index]) = ScaleVertices(
-                    _modelObject[index].FaceList, pbCanvas.Width, pbCanvas.Height, index);
+                _modelObject[index].NVList[i] = new NormalVector();
+                _modelObject[index].NVList[i].X = normalVector.X;
+                _modelObject[index].NVList[i].X = normalVector.Y;
+                _modelObject[index].NVList[i].X = normalVector.Z;
+            }
+            (ScaledEdgeList[index], ScaledVertexList[index], ScaledVertexOrder[index]) =
+                ScaleVertices(_modelObject[index].FaceList, pbCanvas.Width, pbCanvas.Height, index);
             _filler[index].ScaledVertexOrder = ScaledVertexOrder[index];
         }
     }

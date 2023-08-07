@@ -58,8 +58,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException),
-            "Providing a bitmap with a bit-depth different than 32bpp to a FastBitmap must return an ArgumentException")]
+        [ExpectedException(
+            typeof(ArgumentException),
+            "Providing a bitmap with a bit-depth different than 32bpp to a FastBitmap must return an ArgumentException"
+        )]
         public void TestFastBitmapCreation()
         {
             var bitmap = new Bitmap(64, 64);
@@ -99,15 +101,24 @@ namespace FastBitmapTests
             var bitmap = new Bitmap(64, 64);
             var fastBitmap = new FastBitmap(bitmap);
 
-            Assert.IsFalse(fastBitmap.Locked, "Immediately after creation, the FastBitmap.Locked property must be false");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "Immediately after creation, the FastBitmap.Locked property must be false"
+            );
 
             fastBitmap.Lock();
 
-            Assert.IsTrue(fastBitmap.Locked, "After a successful call to .Lock(), the .Locked property must be true");
+            Assert.IsTrue(
+                fastBitmap.Locked,
+                "After a successful call to .Lock(), the .Locked property must be true"
+            );
 
             fastBitmap.Unlock();
 
-            Assert.IsFalse(fastBitmap.Locked, "After a successful call to .Lock(), the .Locked property must be false");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After a successful call to .Lock(), the .Locked property must be false"
+            );
 
             fastBitmap = new FastBitmap(bitmap);
             fastBitmap.Lock();
@@ -118,7 +129,10 @@ namespace FastBitmapTests
         /// Tests a failing scenario for fast bitmap creations where a sequential fast bitmap is created and locked while another fast bitmap is operating on the same bitmap
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException), "Trying to Lock() a bitmap while it is Locked() in another FastBitmap must raise an exception")]
+        [ExpectedException(
+            typeof(InvalidOperationException),
+            "Trying to Lock() a bitmap while it is Locked() in another FastBitmap must raise an exception"
+        )]
         public void TestFailedSequentialFastBitmapLocking()
         {
             var bitmap = new Bitmap(64, 64);
@@ -146,7 +160,8 @@ namespace FastBitmapTests
                     if (bitmap.GetPixel(x, y).ToArgb() != Color.Red.ToArgb())
                     {
                         Assert.Fail(
-                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color");
+                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color"
+                        );
                     }
                 }
             }
@@ -162,7 +177,8 @@ namespace FastBitmapTests
                     if (bitmap.GetPixel(x, y).ToArgb() != Color.FromArgb(25, 12, 0, 42).ToArgb())
                     {
                         Assert.Fail(
-                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color");
+                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color"
+                        );
                     }
                 }
             }
@@ -171,7 +187,10 @@ namespace FastBitmapTests
             var fastBitmap = new FastBitmap(bitmap);
             fastBitmap.Clear(Color.FromArgb(25, 12, 0, 42));
 
-            Assert.IsFalse(fastBitmap.Locked, "After a successfull call to .Clear() on a fast bitmap previously unlocked, the .Locked property must be false");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After a successfull call to .Clear() on a fast bitmap previously unlocked, the .Locked property must be false"
+            );
 
             // Loop through the image checking the pixels now
             for (int y = 0; y < bitmap.Height; y++)
@@ -181,7 +200,8 @@ namespace FastBitmapTests
                     if (bitmap.GetPixel(x, y).ToArgb() != Color.FromArgb(25, 12, 0, 42).ToArgb())
                     {
                         Assert.Fail(
-                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color");
+                            "Immediately after a call to FastBitmap.Clear(), all of the bitmap's pixels must be of the provided color"
+                        );
                     }
                 }
             }
@@ -198,7 +218,7 @@ namespace FastBitmapTests
                 var bitmap = new Bitmap(63, 63); // Non-divisible by 8 bitmap, used to test loop unrolling
 
                 FillBitmapRegion(bitmap, new Rectangle(0, 0, 63, 63), Color.Red);
-                
+
                 using (var fastBitmap = bitmap.FastLock())
                 {
                     fastBitmap.Clear(Color.White);
@@ -209,7 +229,11 @@ namespace FastBitmapTests
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
-                        Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.White.ToArgb(), $"{{{x},{y}}}");
+                        Assert.AreEqual(
+                            bitmap.GetPixel(x, y).ToArgb(),
+                            Color.White.ToArgb(),
+                            $"{{{x},{y}}}"
+                        );
                     }
                 }
             }
@@ -220,7 +244,7 @@ namespace FastBitmapTests
                 var bitmap = new Bitmap(63, 63);
 
                 FillBitmapRegion(bitmap, new Rectangle(0, 0, 64, 64), Color.Red);
-                
+
                 using (var fastBitmap = bitmap.FastLock())
                 {
                     fastBitmap.Clear(Color.FromArgb(0));
@@ -253,14 +277,17 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < original.Width; x++)
                 {
-                    Assert.AreEqual(fastOriginal.GetPixel(x, y).ToArgb(), copy.GetPixel(x, y).ToArgb(),
-                        "Calls to FastBitmap.GetPixel() must return the same value as returned by Bitmap.GetPixel()");
+                    Assert.AreEqual(
+                        fastOriginal.GetPixel(x, y).ToArgb(),
+                        copy.GetPixel(x, y).ToArgb(),
+                        "Calls to FastBitmap.GetPixel() must return the same value as returned by Bitmap.GetPixel()"
+                    );
                 }
             }
 
             fastOriginal.Unlock();
         }
-        
+
         /// <summary>
         /// Tests the behavior of the GetPixelInt(x, y) method by comparing the results from it to the results of the native Bitmap.GetPixel()
         /// </summary>
@@ -277,8 +304,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < original.Width; x++)
                 {
-                    Assert.AreEqual(fastOriginal.GetPixelInt(x, y), copy.GetPixel(x, y).ToArgb(),
-                        "Calls to FastBitmap.GetPixelInt() must return the same value as returned by Bitmap.GetPixel()");
+                    Assert.AreEqual(
+                        fastOriginal.GetPixelInt(x, y),
+                        copy.GetPixel(x, y).ToArgb(),
+                        "Calls to FastBitmap.GetPixelInt() must return the same value as returned by Bitmap.GetPixel()"
+                    );
                 }
             }
 
@@ -301,8 +331,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < original.Width; x++)
                 {
-                    Assert.AreEqual(fastOriginal.GetPixelUInt(x, y), (uint)copy.GetPixel(x, y).ToArgb(),
-                        "Calls to FastBitmap.GetPixelUInt() must return the same value as returned by Bitmap.GetPixel()");
+                    Assert.AreEqual(
+                        fastOriginal.GetPixelUInt(x, y),
+                        (uint)copy.GetPixel(x, y).ToArgb(),
+                        "Calls to FastBitmap.GetPixelUInt() must return the same value as returned by Bitmap.GetPixel()"
+                    );
                 }
             }
 
@@ -325,8 +358,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < original.Width; x++)
                 {
-                    Assert.AreEqual(fastOriginal.GetPixelUInt(x + y * fastOriginal.Height), (uint)copy.GetPixel(x, y).ToArgb(),
-                        "Calls to FastBitmap.GetPixelUInt() must return the same value as returned by Bitmap.GetPixel()");
+                    Assert.AreEqual(
+                        fastOriginal.GetPixelUInt(x + y * fastOriginal.Height),
+                        (uint)copy.GetPixel(x, y).ToArgb(),
+                        "Calls to FastBitmap.GetPixelUInt() must return the same value as returned by Bitmap.GetPixel()"
+                    );
                 }
             }
 
@@ -361,8 +397,11 @@ namespace FastBitmapTests
 
             fastBitmap1.Unlock();
 
-            AssertBitmapEquals(bitmap1, bitmap2,
-                "Calls to FastBitmap.SetPixel() must be equivalent to calls to Bitmap.SetPixel()");
+            AssertBitmapEquals(
+                bitmap1,
+                bitmap2,
+                "Calls to FastBitmap.SetPixel() must be equivalent to calls to Bitmap.SetPixel()"
+            );
         }
 
         /// <summary>
@@ -393,8 +432,11 @@ namespace FastBitmapTests
 
             fastBitmap1.Unlock();
 
-            AssertBitmapEquals(bitmap1, bitmap2,
-                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger");
+            AssertBitmapEquals(
+                bitmap1,
+                bitmap2,
+                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger"
+            );
         }
 
         /// <summary>
@@ -425,8 +467,11 @@ namespace FastBitmapTests
 
             fastBitmap1.Unlock();
 
-            AssertBitmapEquals(bitmap1, bitmap2,
-                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger");
+            AssertBitmapEquals(
+                bitmap1,
+                bitmap2,
+                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger"
+            );
         }
 
         /// <summary>
@@ -457,8 +502,11 @@ namespace FastBitmapTests
 
             fastBitmap1.Unlock();
 
-            AssertBitmapEquals(bitmap1, bitmap2,
-                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger");
+            AssertBitmapEquals(
+                bitmap1,
+                bitmap2,
+                "Calls to FastBitmap.SetPixel() with an integer overload must be equivalent to calls to Bitmap.SetPixel() with a Color with the same ARGB value as the interger"
+            );
         }
 
         /// <summary>
@@ -472,8 +520,11 @@ namespace FastBitmapTests
 
             FastBitmap.CopyPixels(bitmap1, bitmap2);
 
-            AssertBitmapEquals(bitmap1, bitmap2,
-                "After a successful call to CopyPixels(), both bitmaps must be equal down to the pixel level");
+            AssertBitmapEquals(
+                bitmap1,
+                bitmap2,
+                "After a successful call to CopyPixels(), both bitmaps must be equal down to the pixel level"
+            );
         }
 
         /// <summary>
@@ -487,7 +538,9 @@ namespace FastBitmapTests
 
             if (FastBitmap.CopyPixels(bitmap1, bitmap2))
             {
-                Assert.Fail("Trying to copy two bitmaps of different bitdepths should not be allowed");
+                Assert.Fail(
+                    "Trying to copy two bitmaps of different bitdepths should not be allowed"
+                );
             }
 
             bitmap1 = new Bitmap(64, 64, PixelFormat.Format32bppArgb);
@@ -514,7 +567,7 @@ namespace FastBitmapTests
             var targetRectangle = new Rectangle(0, 0, 64, 64);
 
             FastBitmap.CopyRegion(copyBitmap, canvasBitmap, sourceRectangle, targetRectangle);
-            
+
             BitmapSnapshot.Snapshot(canvasBitmap, TestContext);
         }
 
@@ -532,7 +585,7 @@ namespace FastBitmapTests
             var targetRectangle = new Rectangle(9, 9, 23, 48);
 
             FastBitmap.CopyRegion(copyBitmap, canvasBitmap, sourceRectangle, targetRectangle);
-            
+
             BitmapSnapshot.Snapshot(canvasBitmap, TestContext);
         }
 
@@ -550,7 +603,7 @@ namespace FastBitmapTests
             var targetRectangle = new Rectangle(40, 9, 23, 48);
 
             FastBitmap.CopyRegion(copyBitmap, canvasBitmap, sourceRectangle, targetRectangle);
-            
+
             BitmapSnapshot.Snapshot(canvasBitmap, TestContext);
         }
 
@@ -568,7 +621,7 @@ namespace FastBitmapTests
             var targetRectangle = new Rectangle(0, 0, 23, 48);
 
             FastBitmap.CopyRegion(copyBitmap, canvasBitmap, sourceRectangle, targetRectangle);
-            
+
             BitmapSnapshot.Snapshot(canvasBitmap, TestContext);
         }
 
@@ -586,7 +639,7 @@ namespace FastBitmapTests
             var targetRectangle = new Rectangle(0, 0, 23, 48);
 
             FastBitmap.CopyRegion(copyBitmap, canvasBitmap, sourceRectangle, targetRectangle);
-            
+
             BitmapSnapshot.Snapshot(canvasBitmap, TestContext);
         }
 
@@ -623,7 +676,7 @@ namespace FastBitmapTests
             // |     |xxxxx|     |
             // ------|-----|------
             //       -------
-            // 
+            //
 
             var canvasBitmap = new Bitmap(128, 32);
             var copyBitmap = GenerateRainbowBitmap(32, 64);
@@ -649,16 +702,26 @@ namespace FastBitmapTests
 
             // Immediate lock and dispose
             fastBitmap.Lock().Dispose();
-            Assert.IsFalse(fastBitmap.Locked, "After disposing of the FastBitmapLocker object, the underlying fast bitmap must be unlocked");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After disposing of the FastBitmapLocker object, the underlying fast bitmap must be unlocked"
+            );
 
             using (var locker = fastBitmap.Lock())
             {
                 fastBitmap.SetPixel(0, 0, 0);
 
-                Assert.AreEqual(fastBitmap, locker.FastBitmap, "The fast bitmap referenced in the fast bitmap locker must be the one that had the original Lock() call");
+                Assert.AreEqual(
+                    fastBitmap,
+                    locker.FastBitmap,
+                    "The fast bitmap referenced in the fast bitmap locker must be the one that had the original Lock() call"
+                );
             }
 
-            Assert.IsFalse(fastBitmap.Locked, "After disposing of the FastBitmapLocker object, the underlying fast bitmap must be unlocked");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After disposing of the FastBitmapLocker object, the underlying fast bitmap must be unlocked"
+            );
 
             // Test the conditional unlocking of the fast bitmap locker by unlocking the fast bitmap before exiting the 'using' block
             using (fastBitmap.Lock())
@@ -689,7 +752,10 @@ namespace FastBitmapTests
             var bitmap = GenerateRainbowBitmap(64, 64);
             var fastBitmap = new FastBitmap(bitmap);
 
-            Assert.IsFalse(fastBitmap.Locked, "After accessing the .Data property on a fast bitmap previously unlocked, the .Locked property must be false");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After accessing the .Data property on a fast bitmap previously unlocked, the .Locked property must be false"
+            );
 
             var pixels = fastBitmap.DataArray;
 
@@ -697,7 +763,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), pixels[y * bitmap.Width + x], "");
+                    Assert.AreEqual(
+                        bitmap.GetPixel(x, y).ToArgb(),
+                        pixels[y * bitmap.Width + x],
+                        ""
+                    );
                 }
             }
         }
@@ -709,7 +779,10 @@ namespace FastBitmapTests
             var bitmap = GenerateRainbowBitmap(64, 64);
             var fastBitmap = new FastBitmap(bitmap);
 
-            Assert.IsFalse(fastBitmap.Locked, "After accessing the .Data property on a fast bitmap previously unlocked, the .Locked property must be false");
+            Assert.IsFalse(
+                fastBitmap.Locked,
+                "After accessing the .Data property on a fast bitmap previously unlocked, the .Locked property must be false"
+            );
 
             var pixels = fastBitmap.GetDataAsArray();
 
@@ -717,7 +790,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), pixels[y * bitmap.Width + x], "");
+                    Assert.AreEqual(
+                        bitmap.GetPixel(x, y).ToArgb(),
+                        pixels[y * bitmap.Width + x],
+                        ""
+                    );
                 }
             }
         }
@@ -728,10 +805,22 @@ namespace FastBitmapTests
             var bitmap = new Bitmap(4, 4);
             int[] colors =
             {
-                0xFFFFFF, 0xFFFFEF, 0xABABAB, 0xABCDEF,
-                0x111111, 0x123456, 0x654321, 0x000000,
-                0xFFFFFF, 0xFFFFEF, 0xABABAB, 0xABCDEF,
-                0x111111, 0x123456, 0x654321, 0x000000
+                0xFFFFFF,
+                0xFFFFEF,
+                0xABABAB,
+                0xABCDEF,
+                0x111111,
+                0x123456,
+                0x654321,
+                0x000000,
+                0xFFFFFF,
+                0xFFFFEF,
+                0xABABAB,
+                0xABCDEF,
+                0x111111,
+                0x123456,
+                0x654321,
+                0x000000
             };
 
             using (var fastBitmap = bitmap.FastLock())
@@ -746,8 +835,11 @@ namespace FastBitmapTests
                 {
                     int index = y * bitmap.Width + x;
 
-                    Assert.AreEqual(colors[index], bitmap.GetPixel(x, y).ToArgb(),
-                        "After a call to CopyFromArray, the values provided on the on the array must match the values in the bitmap pixels");
+                    Assert.AreEqual(
+                        colors[index],
+                        bitmap.GetPixel(x, y).ToArgb(),
+                        "After a call to CopyFromArray, the values provided on the on the array must match the values in the bitmap pixels"
+                    );
                 }
             }
         }
@@ -761,10 +853,22 @@ namespace FastBitmapTests
 
             int[] colors =
             {
-                0xFFFFFF, 0xFFFFEF, 0xABABAB, 0xABCDEF,
-                0x111111, 0x123456, 0x654321, 0x000000,
-                0x000000, 0xFFFFEF, 0x000000, 0xABCDEF,
-                0x000000, 0x000000, 0x654321, 0x000000
+                0xFFFFFF,
+                0xFFFFEF,
+                0xABABAB,
+                0xABCDEF,
+                0x111111,
+                0x123456,
+                0x654321,
+                0x000000,
+                0x000000,
+                0xFFFFEF,
+                0x000000,
+                0xABCDEF,
+                0x000000,
+                0x000000,
+                0x654321,
+                0x000000
             };
 
             using (var fastBitmap = bitmap.FastLock())
@@ -783,13 +887,19 @@ namespace FastBitmapTests
 
                     if (arrayColor != 0)
                     {
-                        Assert.AreEqual(arrayColor, bitmapColor,
-                            "After a call to CopyFromArray(_, true), the non-zeroes values provided on the on the array must match the values in the bitmap pixels");
+                        Assert.AreEqual(
+                            arrayColor,
+                            bitmapColor,
+                            "After a call to CopyFromArray(_, true), the non-zeroes values provided on the on the array must match the values in the bitmap pixels"
+                        );
                     }
                     else
                     {
-                        Assert.AreEqual(Color.Red.ToArgb(), bitmapColor,
-                            "After a call to CopyFromArray(_, true), the 0 values on the original array must not be copied over");
+                        Assert.AreEqual(
+                            Color.Red.ToArgb(),
+                            bitmapColor,
+                            "After a call to CopyFromArray(_, true), the 0 values on the original array must not be copied over"
+                        );
                     }
                 }
             }
@@ -813,9 +923,17 @@ namespace FastBitmapTests
                 for (int x = 0; x < bitmap.Width; x++)
                 {
                     if (x >= 1 && x <= 4 && y >= 1 && y <= 4)
-                        Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.White.ToArgb(), $"{{{x},{y}}}");
+                        Assert.AreEqual(
+                            bitmap.GetPixel(x, y).ToArgb(),
+                            Color.White.ToArgb(),
+                            $"{{{x},{y}}}"
+                        );
                     else
-                        Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.Red.ToArgb(), $"{{{x},{y}}}");
+                        Assert.AreEqual(
+                            bitmap.GetPixel(x, y).ToArgb(),
+                            Color.Red.ToArgb(),
+                            $"{{{x},{y}}}"
+                        );
                 }
             }
         }
@@ -837,7 +955,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.White.ToArgb(), $"{{{x},{y}}}");
+                    Assert.AreEqual(
+                        bitmap.GetPixel(x, y).ToArgb(),
+                        Color.White.ToArgb(),
+                        $"{{{x},{y}}}"
+                    );
                 }
             }
         }
@@ -861,10 +983,20 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    if (x >= region.Left && x < region.Right && y >= region.Top && y < region.Bottom)
-                        Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.Blue.ToArgb(), $"{{{x},{y}}}");
+                    if (
+                        x >= region.Left && x < region.Right && y >= region.Top && y < region.Bottom
+                    )
+                        Assert.AreEqual(
+                            bitmap.GetPixel(x, y).ToArgb(),
+                            Color.Blue.ToArgb(),
+                            $"{{{x},{y}}}"
+                        );
                     else
-                        Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.Red.ToArgb(), $"{{{x},{y}}}");
+                        Assert.AreEqual(
+                            bitmap.GetPixel(x, y).ToArgb(),
+                            Color.Red.ToArgb(),
+                            $"{{{x},{y}}}"
+                        );
                 }
             }
         }
@@ -893,10 +1025,23 @@ namespace FastBitmapTests
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
-                        if (x >= region.Left && x < region.Right && y >= region.Top && y < region.Bottom)
-                            Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.White.ToArgb(), $"{{{x},{y}}}");
+                        if (
+                            x >= region.Left
+                            && x < region.Right
+                            && y >= region.Top
+                            && y < region.Bottom
+                        )
+                            Assert.AreEqual(
+                                bitmap.GetPixel(x, y).ToArgb(),
+                                Color.White.ToArgb(),
+                                $"{{{x},{y}}}"
+                            );
                         else
-                            Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.Red.ToArgb(), $"{{{x},{y}}}");
+                            Assert.AreEqual(
+                                bitmap.GetPixel(x, y).ToArgb(),
+                                Color.Red.ToArgb(),
+                                $"{{{x},{y}}}"
+                            );
                     }
                 }
             }
@@ -920,10 +1065,19 @@ namespace FastBitmapTests
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
-                        if (x >= region.Left && x < region.Right && y >= region.Top && y < region.Bottom)
+                        if (
+                            x >= region.Left
+                            && x < region.Right
+                            && y >= region.Top
+                            && y < region.Bottom
+                        )
                             Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), 0, $"{{{x},{y}}}");
                         else
-                            Assert.AreEqual(bitmap.GetPixel(x, y).ToArgb(), Color.Red.ToArgb(), $"{{{x},{y}}}");
+                            Assert.AreEqual(
+                                bitmap.GetPixel(x, y).ToArgb(),
+                                Color.Red.ToArgb(),
+                                $"{{{x},{y}}}"
+                            );
                     }
                 }
             }
@@ -965,8 +1119,10 @@ namespace FastBitmapTests
         #region Exception Tests
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
-            "When trying to unlock a FastBitmap that is not locked, an exception must be thrown")]
+        [ExpectedException(
+            typeof(InvalidOperationException),
+            "When trying to unlock a FastBitmap that is not locked, an exception must be thrown"
+        )]
         public void TestUnlockWhileUnlockedException()
         {
             var bitmap = new Bitmap(64, 64);
@@ -976,8 +1132,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
-            "When trying to lock a FastBitmap that is already locked, an exception must be thrown")]
+        [ExpectedException(
+            typeof(InvalidOperationException),
+            "When trying to lock a FastBitmap that is already locked, an exception must be thrown"
+        )]
         public void TestLockWhileLockedException()
         {
             var bitmap = new Bitmap(64, 64);
@@ -988,9 +1146,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via GetPixel(x, y) while it is unlocked, an exception must be thrown"
-            )]
+        )]
         public void TestGetPixelUnlockedException()
         {
             var bitmap = new Bitmap(64, 64);
@@ -1000,7 +1159,8 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via GetPixelInt(x, y) while it is unlocked, an exception must be thrown"
         )]
         public void TestGetPixelIntUnlockedException()
@@ -1012,7 +1172,8 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via GetPixelUInt(x, y) while it is unlocked, an exception must be thrown"
         )]
         public void TestGetPixelUIntUnlockedException()
@@ -1024,7 +1185,8 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via GetPixelUInt(index) while it is unlocked, an exception must be thrown"
         )]
         public void TestGetPixelUIntIndexUnlockedException()
@@ -1036,9 +1198,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via SetPixel(x, y) while it is unlocked, an exception must be thrown"
-            )]
+        )]
         public void TestSetPixelUnlockedException()
         {
             var bitmap = new Bitmap(64, 64);
@@ -1048,7 +1211,8 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException),
+        [ExpectedException(
+            typeof(InvalidOperationException),
             "When trying to read or write to the FastBitmap via SetPixel(index) while it is unlocked, an exception must be thrown"
         )]
         public void TestSetPixelIndexUnlockedException()
@@ -1070,21 +1234,27 @@ namespace FastBitmapTests
             try
             {
                 fastBitmap.GetPixel(-1, -1);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixel(fastBitmap.Width, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixel(0, fastBitmap.Height);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixel(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
@@ -1102,21 +1272,27 @@ namespace FastBitmapTests
             try
             {
                 fastBitmap.GetPixelInt(-1, -1);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixelInt(fastBitmap.Width, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixelInt(0, fastBitmap.Height);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
@@ -1134,21 +1310,27 @@ namespace FastBitmapTests
             try
             {
                 fastBitmap.GetPixelUInt(-1, -1);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixelUInt(fastBitmap.Width, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixelUInt(0, fastBitmap.Height);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelUInt(x, y), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
@@ -1166,17 +1348,21 @@ namespace FastBitmapTests
             try
             {
                 fastBitmap.GetPixelUInt(-1);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelUInt(index), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelUInt(index), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.GetPixelUInt(fastBitmap.Height * fastBitmap.Stride);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via GetPixelUInt(index), an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via GetPixelUInt(index), an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
-            
+
             fastBitmap.GetPixelUInt(fastBitmap.Height * fastBitmap.Stride - 1);
         }
 
@@ -1191,28 +1377,36 @@ namespace FastBitmapTests
             try
             {
                 fastBitmap.SetPixel(-1, -1, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.SetPixel(fastBitmap.Width, 0, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.SetPixel(0, fastBitmap.Height, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
             try
             {
                 fastBitmap.SetPixel(fastBitmap.Height * fastBitmap.Stride, 0);
-                Assert.Fail("When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown");
+                Assert.Fail(
+                    "When trying to access a coordinate that is out of bounds via SetPixel, an exception must be thrown"
+                );
             }
             catch (ArgumentOutOfRangeException) { }
 
@@ -1221,7 +1415,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "An ArgumentException exception must be thrown when trying to copy regions across the same bitmap")]
+        [ExpectedException(
+            typeof(ArgumentException),
+            "An ArgumentException exception must be thrown when trying to copy regions across the same bitmap"
+        )]
         public void TestSameBitmapCopyRegionException()
         {
             var bitmap = new Bitmap(64, 64);
@@ -1233,8 +1430,10 @@ namespace FastBitmapTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException),
-            "an ArgumentException exception must be raised when calling CopyFromArray() with an array of colors that does not match the pixel count of the bitmap")]
+        [ExpectedException(
+            typeof(ArgumentException),
+            "an ArgumentException exception must be raised when calling CopyFromArray() with an array of colors that does not match the pixel count of the bitmap"
+        )]
         public void TestCopyFromArrayMismatchedLengthException()
         {
             var bitmap = new Bitmap(4, 4);
@@ -1243,11 +1442,26 @@ namespace FastBitmapTests
 
             int[] colors =
             {
-                0xFFFFFF, 0xFFFFEF, 0xABABAB, 0xABCDEF,
-                0x111111, 0x123456, 0x654321, 0x000000,
-                0x000000, 0xFFFFEF, 0x000000, 0xABCDEF,
-                0x000000, 0x000000, 0x654321, 0x000000,
-                0x000000, 0x000000, 0x654321, 0x000000
+                0xFFFFFF,
+                0xFFFFEF,
+                0xABABAB,
+                0xABCDEF,
+                0x111111,
+                0x123456,
+                0x654321,
+                0x000000,
+                0x000000,
+                0xFFFFEF,
+                0x000000,
+                0xABCDEF,
+                0x000000,
+                0x000000,
+                0x654321,
+                0x000000,
+                0x000000,
+                0x000000,
+                0x654321,
+                0x000000
             };
 
             using (var fastBitmap = bitmap.FastLock())
@@ -1294,26 +1508,32 @@ namespace FastBitmapTests
                 }
                 else if (hue < 2 / 3.0f)
                 {
-                    r = 0; 
-                    g = 4 - hue * 6; 
-                    b = hue * 6 - 2; 
+                    r = 0;
+                    g = 4 - hue * 6;
+                    b = hue * 6 - 2;
                 }
                 else
                 {
-                    r = hue * 6 - 4; 
+                    r = hue * 6 - 4;
                     g = 0;
                     b = (1 - hue) * 6;
                 }
 
-                if (r > 1) r = 1;
-                if (g > 1) g = 1;
-                if (b > 1) b = 1;
+                if (r > 1)
+                    r = 1;
+                if (g > 1)
+                    g = 1;
+                if (b > 1)
+                    b = 1;
 
-                uint rInt = (uint) (r * 255);
-                uint gInt = (uint) (g * 255);
-                uint bInt = (uint) (b * 255);
+                uint rInt = (uint)(r * 255);
+                uint gInt = (uint)(g * 255);
+                uint bInt = (uint)(b * 255);
 
-                return ((uint)0xFF << 24) | ((rInt & 0xFF) << 16) | ((gInt & 0xFF) << 8) | (bInt & 0xFF);
+                return ((uint)0xFF << 24)
+                    | ((rInt & 0xFF) << 16)
+                    | ((gInt & 0xFF) << 8)
+                    | (bInt & 0xFF);
             }
 
             var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -1342,7 +1562,11 @@ namespace FastBitmapTests
         {
             for (int y = Math.Max(0, region.Top); y < Math.Min(bitmap.Height, region.Bottom); y++)
             {
-                for (int x = Math.Max(0, region.Left); x < Math.Min(bitmap.Width, region.Right); x++)
+                for (
+                    int x = Math.Max(0, region.Left);
+                    x < Math.Min(bitmap.Width, region.Right);
+                    x++
+                )
                 {
                     bitmap.SetPixel(x, y, color);
                 }
@@ -1355,7 +1579,11 @@ namespace FastBitmapTests
         /// <param name="bitmap1">The first bitmap object to compare</param>
         /// <param name="bitmap2">The second bitmap object to compare</param>
         /// <param name="message">The message to display when the comparision fails</param>
-        public static void AssertBitmapEquals([NotNull] Bitmap bitmap1, [NotNull] Bitmap bitmap2, string message = "")
+        public static void AssertBitmapEquals(
+            [NotNull] Bitmap bitmap1,
+            [NotNull] Bitmap bitmap2,
+            string message = ""
+        )
         {
             if (bitmap1.PixelFormat != bitmap2.PixelFormat)
                 Assert.Fail(message);
@@ -1364,7 +1592,11 @@ namespace FastBitmapTests
             {
                 for (int x = 0; x < bitmap1.Width; x++)
                 {
-                    Assert.AreEqual(bitmap1.GetPixel(x, y).ToArgb(), bitmap2.GetPixel(x, y).ToArgb(), message);
+                    Assert.AreEqual(
+                        bitmap1.GetPixel(x, y).ToArgb(),
+                        bitmap2.GetPixel(x, y).ToArgb(),
+                        message
+                    );
                 }
             }
         }
